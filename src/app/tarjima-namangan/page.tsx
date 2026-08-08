@@ -7,6 +7,22 @@ export const metadata: Metadata = {
     "Namanganda notarial tarjima, apostil, diplom va hujjatlar tarjimasi. Lingua Translation — tezkor va sifatli xizmat.",
 };
 
+const CONTENT_SECTIONS = [
+  {
+    heading: "Бюро переводов в Намангане",
+    paragraphs: [
+      "Lingua Translation работает в Намангане и предлагает полный спектр переводческих услуг: нотариальный перевод, апостиль, перевод дипломов, свидетельств и медицинских документов. Наш офис расположен по адресу Бобуршох кучаси 3, удобно добраться из любой части города.",
+      "Мы работаем с русским, узбекским, английским, корейским, немецким и китайским языками, что особенно актуально для жителей Намангана, планирующих учёбу, работу или переезд за рубеж.",
+    ],
+  },
+  {
+    heading: "Почему жители Намангана выбирают нас",
+    paragraphs: [
+      "Мы понимаем особенности работы с местными государственными органами и учебными заведениями, что позволяет быстро и без ошибок готовить документы для официального использования как внутри страны, так и за рубежом. Приём документов возможен онлайн — не обязательно приходить в офис лично для подачи заявки.",
+    ],
+  },
+];
+
 const RELATED = [
   { label: "Нотариальный перевод", href: "/notarial-tarjima" },
   { label: "Апостиль", href: "/apostil" },
@@ -35,6 +51,7 @@ export default function TarjimaNameanganPage() {
         "Online murojaat imkoni",
         "09:00–19:00 ish vaqti",
       ]}
+      contentSections={CONTENT_SECTIONS}
       faqs={FAQS}
       relatedServices={RELATED}
       serviceName="Tarjima xizmatlari Namangan"

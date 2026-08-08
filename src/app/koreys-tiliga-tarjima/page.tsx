@@ -7,6 +7,22 @@ export const metadata: Metadata = {
     "O'zbekistondan koreys tiliga tarjima. Diplom, hujjatlar va tibbiy hujjatlar koreys tiliga tarjimasi Namangan va Toshkentda.",
 };
 
+const CONTENT_SECTIONS = [
+  {
+    heading: "Перевод документов на корейский язык",
+    paragraphs: [
+      "Мы предоставляем профессиональный перевод документов на корейский язык — актуальная услуга для тех, кто планирует учёбу, работу или переезд в Республику Корея. Наши переводчики учитывают особенности корейской деловой и юридической терминологии.",
+      "Мы переводим дипломы, свидетельства, справки, медицинские документы и другую официальную документацию, необходимую для оформления визы, поступления в корейский университет или трудоустройства.",
+    ],
+  },
+  {
+    heading: "Поддержка на корейском языке",
+    paragraphs: [
+      "Наша команда предоставляет консультации и поддержку клиентов на корейском языке, что упрощает процесс оформления документов для корейскоязычных клиентов и тех, кто взаимодействует с корейскими организациями.",
+    ],
+  },
+];
+
 const RELATED = [
   { label: "Ingliz tiliga tarjima", href: "/ingliz-tiliga-tarjima" },
   { label: "Рус tiliga tarjima", href: "/rus-tiliga-tarjima" },
@@ -34,6 +50,7 @@ export default function KoreysTiligaTarjimaPage() {
         "Koreys tilida mijoz qo'llab-quvvatlash",
         "Online qabul va yetkazib berish",
       ]}
+      contentSections={CONTENT_SECTIONS}
       faqs={FAQS}
       relatedServices={RELATED}
       serviceName="Корейский перевод документов"

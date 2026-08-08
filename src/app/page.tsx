@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
@@ -11,12 +10,6 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import { organizationSchema, localBusinessSchema } from "@/lib/seo/jsonLd";
 import { company } from "@/data/company";
-
-export const metadata: Metadata = {
-  title: "Lingua Translation — профессиональное бюро переводов",
-  description:
-    "Нотариальные, медицинские и официальные переводы документов. Апостиль, перевод дипломов, свидетельств и справок. Офисы в Намангане и Ташкенте.",
-};
 
 export default function HomePage() {
   const jsonLd = [

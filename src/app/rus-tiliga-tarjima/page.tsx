@@ -7,6 +7,22 @@ export const metadata: Metadata = {
     "O'zbek tilidan rus tiliga tarjima. Notarial tarjima, diplom va hujjatlar rus tiliga Namangan va Toshkentda.",
 };
 
+const CONTENT_SECTIONS = [
+  {
+    heading: "Перевод документов на русский язык",
+    paragraphs: [
+      "Мы выполняем профессиональный перевод документов с узбекского, английского, корейского, немецкого и китайского языков на русский. Такой перевод часто требуется для использования документов на территории стран СНГ, где русский язык широко принимается государственными органами.",
+      "Мы переводим дипломы, свидетельства, паспорта, медицинские документы, справки и другую официальную документацию с последующим нотариальным заверением при необходимости.",
+    ],
+  },
+  {
+    heading: "Качество и точность перевода",
+    paragraphs: [
+      "Наши переводчики учитывают особенности юридической и официальной терминологии, чтобы перевод был не только точным, но и полностью соответствовал требованиям государственных органов, куда подаётся документ.",
+    ],
+  },
+];
+
 const RELATED = [
   { label: "Ingliz tiliga tarjima", href: "/ingliz-tiliga-tarjima" },
   { label: "Koreys tiliga tarjima", href: "/koreys-tiliga-tarjima" },
@@ -34,6 +50,7 @@ export default function RusTiligaTarjimaPage() {
         "Online qabul",
         "Hamyonbop narxlar",
       ]}
+      contentSections={CONTENT_SECTIONS}
       faqs={FAQS}
       relatedServices={RELATED}
       serviceName="Перевод на русский язык"

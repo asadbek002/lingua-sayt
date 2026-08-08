@@ -9,6 +9,11 @@ interface FAQ {
   answer: string;
 }
 
+interface ContentSection {
+  heading: string;
+  paragraphs: string[];
+}
+
 interface ServicePageProps {
   title: string;
   h1: string;
@@ -18,6 +23,7 @@ interface ServicePageProps {
   relatedServices: { label: string; href: string }[];
   serviceName: string;
   breadcrumbs: { name: string; url: string }[];
+  contentSections?: ContentSection[];
 }
 
 export default function ServicePage({
@@ -29,6 +35,7 @@ export default function ServicePage({
   relatedServices,
   serviceName,
   breadcrumbs,
+  contentSections,
 }: ServicePageProps) {
   const jsonLd = [
     serviceSchema(serviceName, description),
@@ -90,6 +97,21 @@ export default function ServicePage({
         </section>
 
         {/* Form */}
+        {contentSections && contentSections.length > 0 && (
+          <section className="py-14 bg-gray-50">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+              {contentSections.map((section) => (
+                <div key={section.heading}>
+                  <h2 className="text-2xl font-bold text-[#1a1a2e] mb-4">{section.heading}</h2>
+                  {section.paragraphs.map((p, i) => (
+                    <p key={i} className="text-gray-700 leading-relaxed mb-3">{p}</p>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+          </section>
+        )}
         <ContactForm />
 
         {/* FAQ */}

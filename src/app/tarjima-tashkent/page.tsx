@@ -7,6 +7,22 @@ export const metadata: Metadata = {
     "Toshkentda notarial tarjima, apostil, diplom tarjimasi. Lingua Translation — professional tarjima xizmatlari Toshkentda.",
 };
 
+const CONTENT_SECTIONS = [
+  {
+    heading: "Бюро переводов в Ташкенте",
+    paragraphs: [
+      "Lingua Translation предоставляет услуги профессионального перевода в Ташкенте — нотариальный перевод, апостиль, перевод дипломов, свидетельств, медицинских и других официальных документов. Наш офис находится по адресу Богишамол, 21-Б.",
+      "Мы работаем с широким спектром языков — русский, узбекский, английский, корейский, немецкий, китайский — и обслуживаем как частных клиентов, так и компании, которым требуется перевод деловой документации.",
+    ],
+  },
+  {
+    heading: "Удобство для жителей и гостей Ташкента",
+    paragraphs: [
+      "Столичное расположение офиса и возможность онлайн-приёма документов делают наши услуги удобными как для жителей Ташкента, так и для приезжающих из других регионов Узбекистана. Мы гарантируем точность перевода и официальное нотариальное заверение всех документов.",
+    ],
+  },
+];
+
 const RELATED = [
   { label: "Нотариальный перевод", href: "/notarial-tarjima" },
   { label: "Апостиль", href: "/apostil" },
@@ -35,6 +51,7 @@ export default function TarjimaTashkentPage() {
         "Online murojaat imkoni",
         "09:00–19:00 ish vaqti",
       ]}
+      contentSections={CONTENT_SECTIONS}
       faqs={FAQS}
       relatedServices={RELATED}
       serviceName="Tarjima xizmatlari Toshkent"

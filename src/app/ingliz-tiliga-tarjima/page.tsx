@@ -7,6 +7,22 @@ export const metadata: Metadata = {
     "O'zbekistondan ingliz tiliga tarjima. Notarial tarjima, diplom, hujjatlar tarjimasi ingliz tiliga Namangan va Toshkentda.",
 };
 
+const CONTENT_SECTIONS = [
+  {
+    heading: "Перевод документов на английский язык",
+    paragraphs: [
+      "Перевод на английский язык — одна из самых востребованных услуг для тех, кто планирует учёбу за рубежом, трудоустройство в международной компании, оформление визы или вида на жительство в англоязычных странах. Мы переводим дипломы, свидетельства, паспорта и другие официальные документы с точным соблюдением международных стандартов оформления.",
+      "После перевода документ может быть заверен нотариально, что делает его официально признаваемым посольствами, университетами и государственными органами за рубежом.",
+    ],
+  },
+  {
+    heading: "Сроки выполнения",
+    paragraphs: [
+      "Стандартный срок перевода на английский язык — от 2 до 3 часов для небольших документов, для нотариального заверения — 1–2 рабочих дня.",
+    ],
+  },
+];
+
 const RELATED = [
   { label: "Koreys tiliga tarjima", href: "/koreys-tiliga-tarjima" },
   { label: "Rус tiliga tarjima", href: "/rus-tiliga-tarjima" },
@@ -34,6 +50,7 @@ export default function InglisTiligaTarjimaPage() {
         "Online qabul",
         "Hamyonbop narxlar",
       ]}
+      contentSections={CONTENT_SECTIONS}
       faqs={FAQS}
       relatedServices={RELATED}
       serviceName="Ingliz tiliga tarjima"
