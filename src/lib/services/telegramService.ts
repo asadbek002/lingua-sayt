@@ -77,3 +77,11 @@ export async function sendTelegramNotification(
 
   return allSuccess ? "SUCCESS" : "FAILED";
 }
+
+/** Sends a short plain-text notice to all admin chats (HTML-escaped). Returns true if at least one send succeeded. */
+export async function sendTelegramText(text: string): Promise<boolean> {
+  if (!BOT_TOKEN || ADMIN_CHAT_IDS.length === 0) return false;
+  const safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const results = await Promise.all(ADMIN_CHAT_IDS.map((id) => sendMessage(id, safe)));
+  return results.some(Boolean);
+}

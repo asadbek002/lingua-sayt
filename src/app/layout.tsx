@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { LocaleProvider } from "@/i18n/LocaleContext";
+import ChatWidget from "@/components/ChatWidget";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter" });
 
@@ -73,7 +74,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             />
           </noscript>
         )}
-        <LocaleProvider>{children}</LocaleProvider>
+        <LocaleProvider>
+          {children}
+          <ChatWidget />
+        </LocaleProvider>
       </body>
     </html>
   );
