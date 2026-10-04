@@ -71,6 +71,11 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link href="/blog" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  {t.nav.blog}
+                </Link>
+              </li>
             </ul>
           </div>
 

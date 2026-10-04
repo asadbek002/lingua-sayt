@@ -10,7 +10,7 @@ export type SelectOption = { value: string; label: string };
 export type TranslationSchema = {
   nav: {
     home: string; services: string; prices: string; languages: string;
-    process: string; benefits: string; contacts: string; apply: string; telegram: string;
+    process: string; benefits: string; contacts: string; blog: string; apply: string; telegram: string;
   };
   hero: {
     badge: string; title: string; subtitle: string;
@@ -91,7 +91,7 @@ export type TranslationSchema = {
 const ru: TranslationSchema = {
   nav: {
     home: "Главная", services: "Услуги", prices: "Цены", languages: "Языки",
-    process: "Как мы работаем", benefits: "Почему мы", contacts: "Контакты",
+    process: "Как мы работаем", benefits: "Почему мы", blog: "Блог", contacts: "Контакты",
     apply: "Оставить заявку", telegram: "Telegram",
   },
   hero: {
@@ -261,7 +261,7 @@ const ru: TranslationSchema = {
 const uz: TranslationSchema = {
   nav: {
     home: "Bosh sahifa", services: "Xizmatlar", prices: "Narxlar", languages: "Tillar",
-    process: "Ish jarayoni", benefits: "Afzalliklar", contacts: "Aloqa",
+    process: "Ish jarayoni", benefits: "Afzalliklar", blog: "Blog", contacts: "Aloqa",
     apply: "Ariza qoldirish", telegram: "Telegram",
   },
   hero: {
@@ -431,7 +431,7 @@ const uz: TranslationSchema = {
 const en: TranslationSchema = {
   nav: {
     home: "Home", services: "Services", prices: "Prices", languages: "Languages",
-    process: "How We Work", benefits: "Why Choose Us", contacts: "Contacts",
+    process: "How We Work", benefits: "Why Choose Us", blog: "Blog", contacts: "Contacts",
     apply: "Submit Request", telegram: "Telegram",
   },
   hero: {

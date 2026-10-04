@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 // Public blog pages are cached (ISR); refresh them as soon as a post changes
 function refreshPublicPages(slug?: string) {
+  revalidatePath("/");
   revalidatePath("/blog");
   revalidatePath("/sitemap.xml");
   if (slug) revalidatePath(`/blog/${slug}`);

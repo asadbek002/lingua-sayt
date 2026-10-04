@@ -7,6 +7,7 @@ import Process from "@/components/Process";
 import Benefits from "@/components/Benefits";
 import Guarantees from "@/components/Guarantees";
 import GoogleReviews from "@/components/GoogleReviews";
+import LatestPosts from "@/components/LatestPosts";
 import ContactForm from "@/components/ContactForm";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
@@ -38,6 +39,7 @@ export default function HomePage() {
         <Benefits />
         <Guarantees />
         <GoogleReviews />
+        <LatestPosts />
         <ContactForm />
         <ContactSection />
       </main>

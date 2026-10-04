@@ -20,6 +20,7 @@ export default function Header() {
     { label: t.nav.languages, href: "#languages" },
     { label: t.nav.process, href: "#process" },
     { label: t.nav.benefits, href: "#benefits" },
+    { label: t.nav.blog, href: "/blog" },
     { label: t.nav.contacts, href: "#contacts" },
   ];
 

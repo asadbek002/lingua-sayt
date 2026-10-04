@@ -1,0 +1,63 @@
+import Link from "next/link";
+import { BookOpen, Calendar } from "lucide-react";
+import { prisma } from "@/lib/prisma";
+
+const TEXT = { badge: "Блог", title: "Полезные статьи", all: "Все статьи" };
+
+async function getLatest() {
+  try {
+    return await prisma.blogPost.findMany({
+      where: { status: "published" },
+      orderBy: { publishedAt: "desc" },
+      take: 3,
+      select: { id: true, title: true, slug: true, description: true, publishedAt: true },
+    });
+  } catch {
+    return [];
+  }
+}
+
+// Server component: the three newest published posts; hidden while the blog is empty.
+export default async function LatestPosts() {
+  const posts = await getLatest();
+  if (posts.length === 0) return null;
+
+  return (
+    <section id="blog" className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <span className="text-[#c41e3a] text-sm font-semibold uppercase tracking-wider">{TEXT.badge}</span>
+          <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-[#1a1a2e]">{TEXT.title}</h2>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.map((post) => (
+            <Link
+              key={post.id}
+              href={`/blog/${post.slug}`}
+              className="group p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-red-100 transition-all"
+            >
+              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#c41e3a] transition-colors">
+                <BookOpen className="w-5 h-5 text-[#c41e3a] group-hover:text-white" />
+              </div>
+              <h3 className="font-bold text-[#1a1a2e] mb-2 group-hover:text-[#c41e3a] transition-colors">{post.title}</h3>
+              {post.description && <p className="text-sm text-gray-500 mb-3 line-clamp-3">{post.description}</p>}
+              {post.publishedAt && (
+                <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <Calendar className="w-3.5 h-3.5" />
+                  {new Date(post.publishedAt).toLocaleDateString("ru-RU", { timeZone: "UTC" })}
+                </div>
+              )}
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Link href="/blog" className="inline-flex px-6 py-3 text-sm font-semibold text-[#c41e3a] border border-[#c41e3a] rounded-xl hover:bg-red-50 transition-colors">
+            {TEXT.all}
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
