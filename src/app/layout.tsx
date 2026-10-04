@@ -5,6 +5,7 @@ import Script from "next/script";
 import { LocaleProvider } from "@/i18n/LocaleContext";
 import ChatWidget from "@/components/ChatWidget";
 import ContactButtons from "@/components/ContactButtons";
+import PageViewTracker from "@/components/PageViewTracker";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter" });
 
@@ -71,6 +72,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       </head>
       <body className="min-h-screen flex flex-col font-sans antialiased">
+        {YM_ID && /^\d+$/.test(YM_ID) && (
+          <noscript>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`https://mc.yandex.ru/watch/${YM_ID}`} style={{ position: "absolute", left: "-9999px" }} alt="" />
+          </noscript>
+        )}
         {GTM_ID && (
           <noscript>
             <iframe
@@ -83,6 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
         <LocaleProvider>
           {children}
+          <PageViewTracker />
           <ContactButtons />
           <ChatWidget />
         </LocaleProvider>

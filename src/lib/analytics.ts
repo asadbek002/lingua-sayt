@@ -21,3 +21,13 @@ export function trackEvent(name: string, params: Params = {}): void {
     // analytics must never break the page
   }
 }
+
+/** Page view for client-side navigations (the first view is sent by the Metrika init itself). */
+export function trackPageView(url: string): void {
+  if (typeof window === "undefined" || !YM_ID) return;
+  try {
+    window.ym?.(YM_ID, "hit", url);
+  } catch {
+    // ignore
+  }
+}
