@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { MessageCircle, Send, X } from "lucide-react";
 import { useLocale } from "@/i18n/LocaleContext";
 import { company } from "@/data/company";
+import { trackEvent } from "@/lib/analytics";
 
 interface Msg {
   id: number;
@@ -155,6 +156,7 @@ export default function ChatWidget() {
     const next = !open;
     setOpen(next);
     if (next) {
+      trackEvent("open_chat");
       setUnread(0);
       setPhone((p) => p || readStorage(PHONE_KEY));
       setShowPhone(!readStorage(PHONE_KEY));
@@ -183,6 +185,7 @@ export default function ChatWidget() {
       if (!res.ok) throw new Error();
       const data: { id: number } = await res.json();
       lastIdRef.current = Math.max(lastIdRef.current, data.id);
+      trackEvent("chat_message_sent");
       setMessages((prev) => [...prev, { id: data.id, direction: "incoming", text: body }]);
       setText("");
       if (phone.trim()) {

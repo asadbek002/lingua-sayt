@@ -4,12 +4,14 @@ import "./globals.css";
 import Script from "next/script";
 import { LocaleProvider } from "@/i18n/LocaleContext";
 import ChatWidget from "@/components/ChatWidget";
+import ContactButtons from "@/components/ContactButtons";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter" });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://linguatranslation.uz";
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const GTM_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID;
+const YM_ID = process.env.NEXT_PUBLIC_YM_ID;
 
 export const metadata: Metadata = {
   title: {
@@ -62,6 +64,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Script>
           </>
         )}
+        {YM_ID && /^\d+$/.test(YM_ID) && (
+          <Script id="ym-init" strategy="afterInteractive">
+            {`(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(${YM_ID},"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});`}
+          </Script>
+        )}
       </head>
       <body className="min-h-screen flex flex-col font-sans antialiased">
         {GTM_ID && (
@@ -76,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
         <LocaleProvider>
           {children}
+          <ContactButtons />
           <ChatWidget />
         </LocaleProvider>
       </body>
