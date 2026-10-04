@@ -87,6 +87,8 @@ export default function ChatWidget() {
 
   const lastIdRef = useRef(0);
   const openRef = useRef(false);
+  const failuresRef = useRef(0);
+  const tickRef = useRef(0);
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -108,9 +110,15 @@ export default function ChatWidget() {
   const poll = useCallback(async () => {
     const sessionId = readStorage(STORAGE_KEY);
     if (!sessionId || document.hidden) return;
+    // after repeated failures only retry every 10th tick instead of hammering the server
+    if (failuresRef.current >= 3 && ++tickRef.current % 10 !== 0) return;
     try {
       const res = await fetch(`/api/chat?sessionId=${sessionId}&after=${lastIdRef.current}`, { cache: "no-store" });
-      if (!res.ok) return;
+      if (!res.ok) {
+        failuresRef.current++;
+        return;
+      }
+      failuresRef.current = 0;
       const data: { messages: (Msg & { created_at: string })[] } = await res.json();
       const fresh = data.messages.filter((m) => m.id > lastIdRef.current);
       if (fresh.length === 0) return;
@@ -123,7 +131,7 @@ export default function ChatWidget() {
         setUnread((n) => n + fresh.filter((m) => m.direction === "outgoing").length);
       }
     } catch {
-      // network hiccup — try again on the next tick
+      failuresRef.current++;
     }
   }, []);
 

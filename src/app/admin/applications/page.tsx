@@ -76,6 +76,8 @@ export default function AdminApplicationsPage() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [reviewMsg, setReviewMsg] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [chatCheck, setChatCheck] = useState<{ ok: boolean; hint: string } | null>(null);
+  const [chatChecking, setChatChecking] = useState(false);
 
   useEffect(() => {
     if (!ready) return;
@@ -140,6 +142,20 @@ export default function AdminApplicationsPage() {
     }
   };
 
+  const handleChatCheck = async () => {
+    setChatChecking(true);
+    setChatCheck(null);
+    try {
+      const res = await fetch("/api/admin/chat-check", { headers: adminHeaders(password) });
+      const data = await res.json().catch(() => null);
+      setChatCheck(data?.hint ? { ok: !!data.ok, hint: data.hint } : { ok: false, hint: `Ошибка сервера (${res.status})` });
+    } catch {
+      setChatCheck({ ok: false, hint: "Ошибка соединения с сайтом" });
+    } finally {
+      setChatChecking(false);
+    }
+  };
+
   const handleOpenFile = async (fileUrl: string) => {
     try {
       await openAdminFile(password, fileUrl);
@@ -168,6 +184,14 @@ export default function AdminApplicationsPage() {
         >
           <RefreshCw className="w-4 h-4" />
           Обновить
+        </button>
+        <button
+          onClick={handleChatCheck}
+          disabled={chatChecking}
+          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+        >
+          {chatChecking ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+          Проверить чат
         </button>
       </AdminNav>
 
@@ -207,6 +231,16 @@ export default function AdminApplicationsPage() {
             Найти
           </button>
         </form>
+
+        {chatCheck && (
+          <div
+            className={`text-sm rounded-xl px-4 py-3 border ${
+              chatCheck.ok ? "text-green-700 bg-green-50 border-green-100" : "text-red-600 bg-red-50 border-red-100"
+            }`}
+          >
+            Чат с сайта: {chatCheck.hint}
+          </div>
+        )}
 
         {error && (
           <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">{error}</div>

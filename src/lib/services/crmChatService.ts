@@ -59,3 +59,34 @@ export async function fetchChatMessages(sessionId: string, afterId: number): Pro
   const data = await res.json();
   return data.messages as ChatMessage[];
 }
+
+export interface CrmCheckResult {
+  ok: boolean;
+  reason: "ok" | "not_configured" | "secret_mismatch" | "crm_not_updated" | "crm_secret_missing" | "unreachable" | "error";
+  hint: string;
+  status?: number;
+}
+
+/** Admin diagnostics: probes the CRM bridge and explains in plain words what is wrong. Never returns secrets. */
+export async function checkCrmConnection(): Promise<CrmCheckResult> {
+  if (!config()) {
+    return {
+      ok: false,
+      reason: "not_configured",
+      hint: "На сайте не заданы CRM_API_URL и/или CRM_WEBHOOK_SECRET в .env (после правки: npm run build и pm2 restart).",
+    };
+  }
+  try {
+    const res = await crmFetch("/web-chat/web_aaaaaaaaaaaaaaaaaaaa/messages");
+    if (res.ok) return { ok: true, reason: "ok", status: res.status, hint: "Связь с CRM работает." };
+    if (res.status === 403)
+      return { ok: false, reason: "secret_mismatch", status: 403, hint: "CRM отклонила секрет: CRM_WEBHOOK_SECRET на сайте должен совпадать с BOT_WEBHOOK_SECRET в .env CRM." };
+    if (res.status === 404)
+      return { ok: false, reason: "crm_not_updated", status: 404, hint: "В CRM нет адресов /web-chat: смёржьте PR с чатом и задеплойте CRM (scripts/deploy.sh). Также проверьте, что CRM_API_URL заканчивается на /api." };
+    if (res.status === 503)
+      return { ok: false, reason: "crm_secret_missing", status: 503, hint: "В CRM не задан BOT_WEBHOOK_SECRET: впишите его в .env CRM и перезапустите (docker compose up -d)." };
+    return { ok: false, reason: "error", status: res.status, hint: `CRM ответила неожиданным кодом ${res.status}.` };
+  } catch {
+    return { ok: false, reason: "unreachable", hint: "Сайт не достучался до CRM: проверьте CRM_API_URL, что CRM запущена и доступна с этого сервера." };
+  }
+}
