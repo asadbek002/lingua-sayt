@@ -60,7 +60,7 @@ export default function ReviewsSection({ data }: { data: PublicReviews }) {
   const links = (["namangan", "tashkent"] as const).filter((o) => REVIEW_LINKS[o]);
 
   return (
-    <section id="reviews" className="py-20 bg-white">
+    <section id="reviews" className="py-16 sm:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-[#c41e3a] text-sm font-semibold uppercase tracking-wider">{t.badge}</span>
@@ -86,7 +86,7 @@ export default function ReviewsSection({ data }: { data: PublicReviews }) {
               </blockquote>
               <figcaption className="mt-4 pt-4 border-t border-gray-200 text-sm">
                 <span className="font-semibold text-[#1a1a2e]">{r.author || t.anonymous}</span>
-                <span className="block text-xs text-gray-400">
+                <span className="block text-xs text-gray-500">
                   {t.office[r.office]} ·{" "}
                   {new Date(r.date).toLocaleDateString(DATE_LOCALE[locale] ?? "ru-RU", {
                     year: "numeric",
@@ -112,7 +112,7 @@ export default function ReviewsSection({ data }: { data: PublicReviews }) {
             </a>
           ))}
         </div>
-        <p className="mt-4 text-center text-xs text-gray-400">{t.source}</p>
+        <p className="mt-4 text-center text-xs text-gray-500">{t.source}</p>
       </div>
     </section>
   );

@@ -18,7 +18,7 @@ export default async function BlogPage() {
   return (
     <>
       <Header />
-      <main className="pt-16">
+      <main className="pt-16 lg:pt-20">
         <BlogIndex posts={posts} />
       </main>
       <Footer />

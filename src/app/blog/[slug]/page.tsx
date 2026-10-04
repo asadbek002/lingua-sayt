@@ -73,7 +73,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         }}
       />
       <Header />
-      <main className="pt-16">
+      <main className="pt-16 lg:pt-20">
         <BlogPostView post={post} />
       </main>
       <Footer />

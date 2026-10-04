@@ -22,7 +22,7 @@ export default function BlogIndex({ posts }: { posts: PublicPost[] }) {
       <section className="py-14 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {posts.length === 0 ? (
-            <p className="text-center text-gray-400 py-10">{t.blog.empty}</p>
+            <p className="text-center text-gray-500 py-10">{t.blog.empty}</p>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => {
@@ -39,7 +39,7 @@ export default function BlogIndex({ posts }: { posts: PublicPost[] }) {
                     <h2 className="font-bold text-[#1a1a2e] mb-2 group-hover:text-[#c41e3a] transition-colors">{c.title}</h2>
                     {c.description && <p className="text-sm text-gray-500 mb-3">{c.description}</p>}
                     {post.publishedAt && (
-                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
                         <Calendar className="w-3.5 h-3.5" />
                         {new Date(post.publishedAt).toLocaleDateString(t.blog.dateLocale, { timeZone: "UTC" })}
                       </div>

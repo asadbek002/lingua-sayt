@@ -267,7 +267,7 @@ const ru: TranslationSchema = {
       { label: "Апостиль", href: "/apostil" },
       { label: "Перевод диплома", href: "/diplom-tarjimasi" },
       { label: "Перевод метрики", href: "/metrka-tarjimasi" },
-      { label: "Никох гувоҳномаси", href: "/nikoh-guvohnomasi-tarjimasi" },
+      { label: "Перевод свидетельства о браке", href: "/nikoh-guvohnomasi-tarjimasi" },
       { label: "Медицинский перевод", href: "/tibbiy-hujjatlar-tarjimasi" },
     ],
   },

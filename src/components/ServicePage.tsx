@@ -49,9 +49,9 @@ export default function ServicePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main className="pt-20">
+      <main className="pt-16 lg:pt-20">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] py-16">
+        <section className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] py-12 sm:py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Breadcrumbs */}
             <nav className="flex items-center gap-1 text-xs text-gray-400 mb-6">
@@ -69,11 +69,11 @@ export default function ServicePage({
               ))}
             </nav>
 
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">{h1}</h1>
-            <p className="text-gray-300 text-lg mb-6">{description}</p>
+            <h1 className="text-[32px] sm:text-5xl font-bold tracking-tight leading-[1.15] text-white mb-4 text-balance">{h1}</h1>
+            <p className="text-gray-300 text-base sm:text-lg leading-relaxed mb-8">{description}</p>
             <a
               href="#application"
-              className="inline-flex items-center px-6 py-3 bg-[#c41e3a] text-white font-semibold rounded-xl hover:bg-[#a01830] transition-colors"
+              className="inline-flex items-center justify-center h-12 px-7 bg-[#c41e3a] shadow-lg shadow-black/20 whitespace-nowrap text-white font-semibold rounded-xl hover:bg-[#a01830] transition-colors"
             >
               Оставить заявку
             </a>
@@ -125,7 +125,7 @@ export default function ServicePage({
                 >
                   <summary className="font-semibold text-[#1a1a2e] list-none flex items-center justify-between">
                     {faq.question}
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-open:rotate-90 transition-transform flex-shrink-0" />
+                    <ChevronRight className="w-5 h-5 text-gray-500 group-open:rotate-90 transition-transform flex-shrink-0" />
                   </summary>
                   <p className="mt-3 text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
                 </details>

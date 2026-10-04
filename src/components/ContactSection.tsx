@@ -3,6 +3,7 @@
 import { Phone, Mail, Clock, MapPin, Send } from "lucide-react";
 import InstagramIcon from "@/components/icons/InstagramIcon";
 import { company } from "@/data/company";
+import { formatPhone } from "@/lib/utils/formatPhone";
 import { useLocale } from "@/i18n/LocaleContext";
 
 export default function ContactSection() {
@@ -11,7 +12,7 @@ export default function ContactSection() {
   const officeLabels = [t.contacts.namangan, t.contacts.tashkent];
 
   return (
-    <section id="contacts" className="py-20 bg-white">
+    <section id="contacts" className="py-16 sm:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <span className="text-[#c41e3a] text-sm font-semibold uppercase tracking-wider">
@@ -21,11 +22,11 @@ export default function ContactSection() {
           <p className="mt-4 text-gray-500 max-w-xl mx-auto">{t.contacts.subtitle}</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
           {company.offices.map((office, idx) => (
             <div
               key={office.city}
-              className="p-8 bg-gray-50 rounded-3xl border border-gray-100 hover:shadow-md transition-shadow"
+              className="p-6 sm:p-8 bg-gray-50 rounded-3xl border border-gray-100"
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-[#c41e3a] rounded-xl flex items-center justify-center">
@@ -41,7 +42,7 @@ export default function ContactSection() {
                     href={`tel:${office.phone}`}
                     className="text-gray-700 hover:text-[#c41e3a] font-medium transition-colors"
                   >
-                    {office.phone}
+                    <span className="tabular-nums">{formatPhone(office.phone)}</span>
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
@@ -50,10 +51,10 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5 sm:gap-3">
                 <a
                   href={`tel:${office.phone}`}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#c41e3a] text-white text-sm font-semibold rounded-lg hover:bg-[#a01830] transition-colors"
+                  className="col-span-2 sm:col-span-1 flex items-center justify-center gap-2 h-11 px-4 bg-[#c41e3a] text-white text-sm font-semibold rounded-lg hover:bg-[#a01830] transition-colors"
                 >
                   <Phone className="w-4 h-4" />
                   {t.contacts.call}
@@ -62,7 +63,7 @@ export default function ContactSection() {
                   href={office.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 text-sm font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center gap-2 h-11 px-4 bg-white text-gray-700 whitespace-nowrap text-sm font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
                 >
                   <MapPin className="w-4 h-4" />
                   {t.contacts.map}
@@ -71,7 +72,7 @@ export default function ContactSection() {
                   href={company.socialLinks.telegram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#0088cc] text-white text-sm font-semibold rounded-lg hover:bg-[#006699] transition-colors"
+                  className="flex items-center justify-center gap-2 h-11 px-4 bg-[#0088cc] text-white text-sm font-semibold rounded-lg hover:bg-[#006699] transition-colors"
                 >
                   <Send className="w-4 h-4" />
                   Telegram
@@ -82,7 +83,7 @@ export default function ContactSection() {
         </div>
 
         {/* General contacts */}
-        <div className="mt-10 p-8 bg-gradient-to-br from-[#1a1a2e] to-[#16213e] rounded-3xl">
+        <div className="mt-6 sm:mt-8 p-6 sm:p-8 bg-gradient-to-br from-[#1a1a2e] to-[#16213e] rounded-3xl">
           <h3 className="text-lg font-bold text-white mb-6">{t.contacts.generalContacts}</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="flex items-center gap-3">
@@ -93,7 +94,7 @@ export default function ContactSection() {
                 <p className="text-xs text-gray-400">Email</p>
                 <a
                   href={`mailto:${company.email}`}
-                  className="text-sm text-white hover:text-red-300 transition-colors"
+                  className="text-sm text-white hover:text-red-300 transition-colors break-all"
                 >
                   {company.email}
                 </a>

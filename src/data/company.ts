@@ -12,11 +12,13 @@ export const company = {
   phones: [
     {
       city: "Наманган",
+      cityI18n: { ru: "Наманган", uz: "Namangan", en: "Namangan" },
       phone: "+998907896161",
       label: "Офис Наманган",
     },
     {
       city: "Ташкент",
+      cityI18n: { ru: "Ташкент", uz: "Toshkent", en: "Tashkent" },
       phone: "+998777056262",
       label: "Офис Ташкент",
     },
@@ -25,12 +27,14 @@ export const company = {
   offices: [
     {
       city: "Наманган",
+      cityI18n: { ru: "Наманган", uz: "Namangan", en: "Namangan" },
       label: "Офис Наманган",
       phone: "+998907896161",
       mapUrl: "https://share.google/3bw25bEt6zSrWTExK",
     },
     {
       city: "Ташкент",
+      cityI18n: { ru: "Ташкент", uz: "Toshkent", en: "Tashkent" },
       label: "Офис Ташкент",
       phone: "+998777056262",
       mapUrl: "https://maps.app.goo.gl/soFBYrAZFcixWNaC8",

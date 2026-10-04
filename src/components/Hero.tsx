@@ -1,51 +1,53 @@
 "use client";
 
-import { Send, MapPin, FileText, Stamp, GraduationCap, Stethoscope, Zap } from "lucide-react";
+import { Send, MapPin, FileText, Stamp, GraduationCap, Stethoscope, Zap, ArrowRight } from "lucide-react";
+import { formatPhone } from "@/lib/utils/formatPhone";
 import { company } from "@/data/company";
 import { useLocale } from "@/i18n/LocaleContext";
 
 const serviceIcons = [Stamp, FileText, GraduationCap, Stethoscope, Zap];
 
 export default function Hero() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const highlights = t.hero.serviceHighlights;
 
   return (
     <section
       id="hero"
-      className="pt-20 min-h-screen flex items-center bg-gradient-to-br from-slate-50 via-white to-red-50"
+      className="pt-16 lg:pt-20 lg:min-h-[calc(100vh-1px)] flex items-center bg-gradient-to-br from-slate-50 via-white to-red-50"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] gap-12 items-center">
           {/* Left: Text */}
           <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1a1a2e] leading-tight mb-6">
+            <h1 className="text-[32px] sm:text-4xl lg:text-5xl font-bold text-[#1a1a2e] leading-[1.15] tracking-tight mb-5 sm:mb-6 text-balance">
               {t.hero.title}
             </h1>
 
-            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+            <p className="text-base sm:text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
               {t.hero.subtitle}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 mb-10">
               <a
                 href="#application"
-                className="inline-flex items-center justify-center px-6 py-3 bg-[#c41e3a] text-white font-semibold rounded-xl hover:bg-[#a01830] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="group inline-flex items-center justify-center gap-2 h-12 px-6 bg-[#c41e3a] text-white font-semibold rounded-xl hover:bg-[#a01830] transition-all shadow-lg shadow-[#c41e3a]/20 hover:shadow-xl hover:shadow-[#c41e3a]/25 whitespace-nowrap"
               >
                 {t.hero.primaryButton}
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </a>
               <a
                 href={company.socialLinks.telegram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#0088cc] font-semibold rounded-xl border-2 border-[#0088cc] hover:bg-blue-50 transition-all"
+                className="inline-flex items-center justify-center gap-2 h-12 px-6 bg-white text-[#0088cc] font-semibold rounded-xl border-2 border-[#0088cc] hover:bg-blue-50 transition-colors whitespace-nowrap"
               >
                 <Send className="w-4 h-4" />
                 {t.hero.telegramButton}
               </a>
               <a
                 href="#contacts"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:bg-gray-50 transition-all"
+                className="inline-flex items-center justify-center gap-2 h-12 px-3 text-gray-700 font-semibold rounded-xl hover:text-[#c41e3a] transition-colors whitespace-nowrap"
               >
                 <MapPin className="w-4 h-4" />
                 {t.hero.officesButton}
@@ -53,24 +55,23 @@ export default function Hero() {
             </div>
 
             {/* Stats */}
-            <div className="flex gap-8">
-              <div>
-                <p className="text-2xl font-bold text-[#c41e3a]">{t.hero.statLanguages}</p>
-                <p className="text-sm text-gray-500">{t.hero.statLanguagesLabel}</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-[#c41e3a]">{t.hero.statOffices}</p>
-                <p className="text-sm text-gray-500">{t.hero.statOfficesLabel}</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-[#c41e3a]">{t.hero.statOnline}</p>
-                <p className="text-sm text-gray-500">{t.hero.statOnlineLabel}</p>
-              </div>
-            </div>
+            <dl className="grid grid-cols-3 max-w-md divide-x divide-gray-200 border-y border-gray-200 py-4">
+              {[
+                [t.hero.statLanguages, t.hero.statLanguagesLabel],
+                [t.hero.statOffices, t.hero.statOfficesLabel],
+                [t.hero.statOnline, t.hero.statOnlineLabel],
+              ].map(([value, label], i) => (
+                <div key={label} className={i === 0 ? "pr-4" : "px-4"}>
+                  <dt className="sr-only">{label}</dt>
+                  <dd className="text-xl sm:text-2xl font-bold text-[#c41e3a] leading-tight">{value}</dd>
+                  <dd className="mt-0.5 text-xs sm:text-sm text-gray-500 leading-snug">{label}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
 
           {/* Right: Service Cards */}
-          <div className="lg:flex lg:justify-end">
+          <div className="hidden lg:flex lg:justify-end">
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 max-w-sm w-full mx-auto lg:mx-0">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
                 {t.hero.servicesCardTitle}
@@ -97,14 +98,14 @@ export default function Hero() {
                 {company.offices.map((office) => (
                   <div key={office.city} className="flex items-center gap-2 text-sm text-gray-700 mb-1">
                     <span className="w-2 h-2 rounded-full bg-[#c41e3a]" />
-                    <span className="font-medium">{office.city}</span>
-                    <span className="text-gray-400 ml-auto text-xs">{office.phone}</span>
+                    <span className="font-medium">{office.cityI18n[locale] ?? office.city}</span>
+                    <span className="text-gray-500 ml-auto text-xs tabular-nums">{formatPhone(office.phone)}</span>
                   </div>
                 ))}
                 <div className="flex items-center gap-2 text-sm text-gray-700 mt-1">
                   <span className="w-2 h-2 rounded-full bg-[#c41e3a]" />
                   <span className="font-medium">{t.hero.onlineLabel}</span>
-                  <span className="text-gray-400 ml-auto text-xs">{t.hero.onlineSubLabel}</span>
+                  <span className="text-gray-500 ml-auto text-xs">{t.hero.onlineSubLabel}</span>
                 </div>
               </div>
             </div>

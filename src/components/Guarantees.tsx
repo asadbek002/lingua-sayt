@@ -29,7 +29,7 @@ export default function Guarantees() {
   const items = TEXT[locale] ?? TEXT.ru;
 
   return (
-    <section id="guarantees" className="py-12 bg-gray-50">
+    <section id="guarantees" className="py-12 sm:py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-3 gap-6">
           {items.map((item, i) => {

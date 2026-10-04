@@ -25,7 +25,7 @@ export default function BlogPostView({ post }: { post: PublicPost }) {
         <h1 className="text-3xl sm:text-4xl font-bold text-[#1a1a2e] mb-4">{c.title}</h1>
 
         {post.publishedAt && (
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
             <Calendar className="w-4 h-4" />
             {new Date(post.publishedAt).toLocaleDateString(t.blog.dateLocale, {
               day: "numeric",

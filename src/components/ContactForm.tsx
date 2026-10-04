@@ -76,13 +76,15 @@ export default function ContactForm() {
   };
 
   const fieldClass = (hasError: boolean) =>
-    `w-full px-4 py-2.5 rounded-xl border text-sm transition-colors outline-none ${
-      hasError ? "border-red-300 bg-red-50" : "border-gray-200 focus:border-[#c41e3a]"
+    `w-full px-4 py-3 sm:py-2.5 rounded-xl border text-base sm:text-sm text-[#1a1a2e] placeholder:text-gray-500 transition-colors outline-none focus:ring-4 ${
+      hasError
+        ? "border-red-300 bg-red-50 focus:ring-red-100"
+        : "border-gray-200 hover:border-gray-300 focus:border-[#c41e3a] focus:ring-red-50"
     }`;
 
   if (submitted) {
     return (
-      <section id="application" className="py-20 bg-gray-50">
+      <section id="application" className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <div className="bg-white rounded-3xl p-12 shadow-sm border border-gray-100">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -103,7 +105,7 @@ export default function ContactForm() {
   }
 
   return (
-    <section id="application" className="py-20 bg-gray-50">
+    <section id="application" className="py-16 sm:py-20 bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <span className="text-[#c41e3a] text-sm font-semibold uppercase tracking-wider">
@@ -251,7 +253,7 @@ export default function ContactForm() {
                         {...register("urgency")}
                         className="sr-only peer"
                       />
-                      <div className="text-center px-3 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 peer-checked:border-[#c41e3a] peer-checked:bg-red-50 peer-checked:text-[#c41e3a] peer-checked:font-medium transition-all hover:border-gray-300">
+                      <div className="text-center px-3 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 peer-focus-visible:ring-4 peer-focus-visible:ring-red-100 peer-checked:border-[#c41e3a] peer-checked:bg-red-50 peer-checked:text-[#c41e3a] peer-checked:font-medium transition-all hover:border-gray-300">
                         {opt.label}
                       </div>
                     </label>
@@ -273,9 +275,9 @@ export default function ContactForm() {
 
             {!file ? (
               <label className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:border-[#c41e3a] hover:bg-red-50/30 transition-all">
-                <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                <Upload className="w-8 h-8 text-gray-500 mb-2" />
                 <p className="text-sm font-medium text-gray-600 mb-1">{t.form.fileTitle}</p>
-                <p className="text-xs text-gray-400">{t.form.fileSubtitle}</p>
+                <p className="text-xs text-gray-500">{t.form.fileSubtitle}</p>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -339,7 +341,7 @@ export default function ContactForm() {
               )}
             </button>
 
-            <p className="mt-3 text-center text-xs text-gray-400">{t.form.privacy}</p>
+            <p className="mt-3 text-center text-xs text-gray-500">{t.form.privacy}</p>
           </div>
         </form>
       </div>
