@@ -276,7 +276,11 @@ export async function getReviews(locationId: string) {
     );
     if (!res.ok) return { reviews: [], error: await googleError(res, "Google API") };
     const data = await res.json();
-    return { reviews: data.reviews || [] };
+    return {
+      reviews: data.reviews || [],
+      averageRating: typeof data.averageRating === "number" ? data.averageRating : undefined,
+      totalReviewCount: typeof data.totalReviewCount === "number" ? data.totalReviewCount : undefined,
+    };
   } catch (err) {
     console.error("[GoogleBusinessService] getReviews error:", err);
     return { reviews: [], error: "Failed to fetch reviews" };
