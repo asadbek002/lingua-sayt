@@ -61,7 +61,9 @@ function CopyButton({ text }: { text: string }) {
 export default function AdminGoogleBusinessPage() {
   const { password, ready, logout } = useAdminAuth();
   const [office, setOffice] = useState<"namangan" | "tashkent">("namangan");
-  const [reviews, setReviews] = useState<{ reviewId: string; reviewer: { displayName: string }; starRating: string; comment?: string; createTime: string }[]>([]);
+  const [reviews, setReviews] = useState<{ reviewId: string; reviewer: { displayName: string }; starRating: string; comment?: string; createTime: string; reviewReply?: { comment: string } }[]>([]);
+  const [repliedIds, setRepliedIds] = useState<Set<string>>(new Set());
+  const [showReplied, setShowReplied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState("");
   const [postTopic, setPostTopic] = useState("");
@@ -229,12 +231,18 @@ export default function AdminGoogleBusinessPage() {
 
     const data = await res.json();
     if (data.success) {
-      alert("Ответ опубликован!");
       setReviewResponses((prev) => ({ ...prev, [reviewId]: "" }));
+      // answered reviews drop out of the list
+      setRepliedIds((prev) => new Set(prev).add(reviewId));
+      setNotice("");
     } else {
       alert(data.error || "Ошибка публикации ответа");
     }
   };
+
+  const isAnswered = (r: (typeof reviews)[number]) => !!r.reviewReply || repliedIds.has(r.reviewId);
+  const visibleReviews = showReplied ? reviews : reviews.filter((r) => !isAnswered(r));
+  const answeredCount = reviews.filter(isAnswered).length;
 
   if (!ready) {
     return (
@@ -479,6 +487,10 @@ export default function AdminGoogleBusinessPage() {
           <h2 className="font-bold text-[#1a1a2e] mb-4">
             Отзывы {office === "namangan" ? "Намангана" : "Ташкента"}
           </h2>
+          <label className="flex items-center gap-2 text-xs text-gray-500 mb-4 cursor-pointer">
+            <input type="checkbox" checked={showReplied} onChange={(e) => setShowReplied(e.target.checked)} />
+            Показать отвеченные ({answeredCount})
+          </label>
           {loading ? (
             <div className="text-center py-8 text-gray-400">
               <Loader2 className="w-6 h-6 animate-spin mx-auto" />
@@ -487,9 +499,13 @@ export default function AdminGoogleBusinessPage() {
             <p className="text-gray-400 text-sm text-center py-6">
               Отзывы не найдены (Google Business может быть не подключён)
             </p>
+          ) : visibleReviews.length === 0 ? (
+            <p className="text-gray-400 text-sm text-center py-6">
+              Все отзывы обработаны — без ответа ничего не осталось 🎉
+            </p>
           ) : (
             <div className="space-y-4">
-              {reviews.map((review) => {
+              {visibleReviews.map((review) => {
                 const ratingMap: Record<string, number> = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
                 const stars = ratingMap[review.starRating] || 0;
                 return (
@@ -504,6 +520,11 @@ export default function AdminGoogleBusinessPage() {
                       <span className="text-xs text-gray-400 ml-auto">{new Date(review.createTime).toLocaleDateString("ru-RU")}</span>
                     </div>
                     {review.comment && <p className="text-sm text-gray-600 mb-3">{review.comment}</p>}
+                    {isAnswered(review) && (
+                      <p className="text-xs text-green-600 mb-2">
+                        ✓ Ответ дан{review.reviewReply?.comment ? `: ${review.reviewReply.comment}` : ""}
+                      </p>
+                    )}
 
                     <div className="space-y-2">
                       <button

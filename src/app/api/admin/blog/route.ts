@@ -1,11 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/serverAuth";
+import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+
+// Public blog pages are cached (ISR); refresh them as soon as a post changes
+function refreshPublicPages(slug?: string) {
+  revalidatePath("/blog");
+  revalidatePath("/sitemap.xml");
+  if (slug) revalidatePath(`/blog/${slug}`);
+}
 
 export async function GET(req: NextRequest) {
   const denied = requireAdmin(req);
   if (denied) return denied;
+
+  const id = new URL(req.url).searchParams.get("id");
+  if (id) {
+    const post = await prisma.blogPost.findUnique({ where: { id } }).catch(() => null);
+    if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    return NextResponse.json({ post });
+  }
 
   try {
     const posts = await prisma.blogPost.findMany({ orderBy: { createdAt: "desc" } });
@@ -40,6 +55,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    refreshPublicPages(post.slug);
     return NextResponse.json({ success: true, post });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
@@ -73,6 +89,7 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const post = await prisma.blogPost.update({ where: { id }, data: updateData });
+    refreshPublicPages(post.slug);
     return NextResponse.json({ success: true, post });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
@@ -92,7 +109,8 @@ export async function DELETE(req: NextRequest) {
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   try {
-    await prisma.blogPost.delete({ where: { id } });
+    const post = await prisma.blogPost.delete({ where: { id } });
+    refreshPublicPages(post.slug);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Post not found" }, { status: 404 });

@@ -85,6 +85,18 @@ export default function AdminSeoPage() {
       </AdminNav>
 
       <div className="p-6 space-y-6">
+        {/* How it works */}
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 text-sm text-gray-700">
+          <h2 className="font-bold text-[#1a1a2e] mb-2">Как работает этот раздел</h2>
+          <ol className="list-decimal pl-5 space-y-1">
+            <li>Для каждой страницы сайта нажмите «Генерировать title / description / FAQ» — ИИ предложит текст.</li>
+            <li><b>Title</b> — заголовок страницы в поиске Google, <b>description</b> — короткое описание под ним, <b>FAQ</b> — вопросы и ответы для страницы.</li>
+            <li>Нажмите «Копировать» и вставьте текст в код страницы (файл <code>src/app/…/page.tsx</code>) или передайте разработчику. <b>Сайт сам не меняется</b> — это только подсказки.</li>
+            <li>Блок «SEO задачи» (если есть) — напоминания, что стоит обновить.</li>
+          </ol>
+          <p className="mt-2 text-xs text-gray-500">Если вместо текста приходит ошибка — проверьте AI_API_KEY в .env сервера.</p>
+        </div>
+
         {/* SEO Tasks */}
         {tasks.length > 0 && (
           <div className="bg-white rounded-2xl border p-6">
@@ -152,6 +164,14 @@ export default function AdminSeoPage() {
                         {key.replace(`-${page.slug}`, "").replace("generate-", "")}
                       </p>
                       <p className="text-xs text-gray-700 whitespace-pre-wrap">{value}</p>
+                      {!value.startsWith("Ошибка:") && (
+                        <button
+                          onClick={() => navigator.clipboard.writeText(value)}
+                          className="mt-2 text-xs text-[#c41e3a] hover:underline"
+                        >
+                          Копировать
+                        </button>
+                      )}
                     </div>
                   ))}
               </div>

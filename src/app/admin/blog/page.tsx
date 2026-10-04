@@ -182,7 +182,7 @@ export default function AdminBlogPage() {
                     <span className={`px-2 py-0.5 text-xs rounded-full ${post.status === "published" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
                       {post.status === "published" ? "Опубликовано" : "Черновик"}
                     </span>
-                    <a href={`/blog/${post.slug}`} target="_blank" rel="noopener noreferrer" className="p-1.5 hover:bg-gray-200 rounded-lg">
+                    <a href={`/admin/blog/preview?id=${post.id}`} target="_blank" rel="noopener noreferrer" title="Предпросмотр" className="p-1.5 hover:bg-gray-200 rounded-lg">
                       <Eye className="w-4 h-4 text-gray-500" />
                     </a>
                     <button onClick={() => handlePublish(post.id, post.status)} className="px-3 py-1 text-xs font-medium bg-white border border-gray-200 rounded-lg hover:border-[#c41e3a] hover:text-[#c41e3a]">
