@@ -2,6 +2,11 @@
 const GOOGLE_BUSINESS_ENABLED = process.env.GOOGLE_BUSINESS_ENABLED !== "false";
 const stripId = (v: string) => v.replace(/^accounts\//, "").replace(/^locations\//, "");
 const GOOGLE_ACCOUNT_ID = stripId(process.env.GOOGLE_ACCOUNT_ID || "");
+// Offices may live under different Google accounts; fall back to GOOGLE_ACCOUNT_ID
+const accountIds = {
+  namangan: stripId(process.env.GOOGLE_ACCOUNT_ID_NAMANGAN || "") || GOOGLE_ACCOUNT_ID,
+  tashkent: stripId(process.env.GOOGLE_ACCOUNT_ID_TASHKENT || "") || GOOGLE_ACCOUNT_ID,
+};
 const GOOGLE_LOCATION_ID_NAMANGAN = stripId(process.env.GOOGLE_LOCATION_ID_NAMANGAN || "");
 const GOOGLE_LOCATION_ID_TASHKENT = stripId(process.env.GOOGLE_LOCATION_ID_TASHKENT || "");
 
@@ -23,8 +28,15 @@ async function googleError(res: Response, fallback: string): Promise<string> {
   }
 }
 
-function missingConfig(locationId: string): string | null {
-  if (!GOOGLE_ACCOUNT_ID) return "Не задан GOOGLE_ACCOUNT_ID в .env";
+// The account that owns a given location (by office), falling back to the default account
+function accountIdFor(locationId: string): string {
+  if (locationId && locationId === stripId(process.env.GOOGLE_LOCATION_ID_NAMANGAN || "")) return accountIds.namangan;
+  if (locationId && locationId === stripId(process.env.GOOGLE_LOCATION_ID_TASHKENT || "")) return accountIds.tashkent;
+  return GOOGLE_ACCOUNT_ID;
+}
+
+function missingConfig(accountId: string, locationId: string): string | null {
+  if (!accountId) return "Не задан GOOGLE_ACCOUNT_ID (или GOOGLE_ACCOUNT_ID_NAMANGAN / _TASHKENT) в .env";
   if (!locationId) return "Не задан ID офиса (GOOGLE_LOCATION_ID_NAMANGAN / GOOGLE_LOCATION_ID_TASHKENT) в .env";
   return null;
 }
@@ -208,7 +220,7 @@ export async function getBusinessProfile(locationId: string) {
 
   try {
     const res = await fetch(
-      `${GBP_API}/accounts/${GOOGLE_ACCOUNT_ID}/locations/${locationId}`,
+      `${GBP_API}/accounts/${accountIdFor(locationId)}/locations/${locationId}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     return await res.json();
@@ -222,7 +234,7 @@ export async function getReviews(locationId: string) {
   if (!GOOGLE_BUSINESS_ENABLED) {
     return { reviews: [], error: "Интеграция отключена (GOOGLE_BUSINESS_ENABLED=false)" };
   }
-  const missing = missingConfig(locationId);
+  const missing = missingConfig(accountIdFor(locationId), locationId);
   if (missing) return { reviews: [], error: missing };
 
   const token = await getAccessToken();
@@ -232,7 +244,7 @@ export async function getReviews(locationId: string) {
 
   try {
     const res = await fetch(
-      `${GBP_API}/accounts/${GOOGLE_ACCOUNT_ID}/locations/${locationId}/reviews`,
+      `${GBP_API}/accounts/${accountIdFor(locationId)}/locations/${locationId}/reviews`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     if (!res.ok) return { reviews: [], error: await googleError(res, "Google API") };
@@ -248,7 +260,7 @@ export async function replyToReview(locationId: string, reviewId: string, commen
   if (!GOOGLE_BUSINESS_ENABLED) {
     return { error: "Интеграция отключена (GOOGLE_BUSINESS_ENABLED=false)" };
   }
-  const missing = missingConfig(locationId);
+  const missing = missingConfig(accountIdFor(locationId), locationId);
   if (missing) return { error: missing };
 
   const token = await getAccessToken();
@@ -258,7 +270,7 @@ export async function replyToReview(locationId: string, reviewId: string, commen
 
   try {
     const res = await fetch(
-      `${GBP_API}/accounts/${GOOGLE_ACCOUNT_ID}/locations/${locationId}/reviews/${reviewId}/reply`,
+      `${GBP_API}/accounts/${accountIdFor(locationId)}/locations/${locationId}/reviews/${reviewId}/reply`,
       {
         method: "PUT",
         headers: {
@@ -279,7 +291,7 @@ export async function createPost(locationId: string, summary: string) {
   if (!GOOGLE_BUSINESS_ENABLED) {
     return { error: "Интеграция отключена (GOOGLE_BUSINESS_ENABLED=false)" };
   }
-  const missing = missingConfig(locationId);
+  const missing = missingConfig(accountIdFor(locationId), locationId);
   if (missing) return { error: missing };
 
   const token = await getAccessToken();
@@ -289,7 +301,7 @@ export async function createPost(locationId: string, summary: string) {
 
   try {
     const res = await fetch(
-      `${GBP_API}/accounts/${GOOGLE_ACCOUNT_ID}/locations/${locationId}/localPosts`,
+      `${GBP_API}/accounts/${accountIdFor(locationId)}/locations/${locationId}/localPosts`,
       {
         method: "POST",
         headers: {
