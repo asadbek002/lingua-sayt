@@ -29,12 +29,15 @@ function missingConfig(locationId: string): string | null {
   return null;
 }
 
+let lastTokenError = "";
+
 async function getAccessToken(): Promise<string | null> {
   const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
   const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
   if (!REFRESH_TOKEN || !CLIENT_ID || !CLIENT_SECRET) {
+    lastTokenError = "Не заданы GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET или GOOGLE_REFRESH_TOKEN";
     return null;
   }
 
@@ -44,16 +47,22 @@ async function getAccessToken(): Promise<string | null> {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         grant_type: "refresh_token",
-        refresh_token: REFRESH_TOKEN,
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
+        refresh_token: REFRESH_TOKEN.trim(),
+        client_id: CLIENT_ID.trim(),
+        client_secret: CLIENT_SECRET.trim(),
       }),
     });
 
-    if (!res.ok) return null;
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      lastTokenError = `Google: ${data.error || res.status}${data.error_description ? ` — ${data.error_description}` : ""}`;
+      console.error("[GoogleBusinessService] token error:", lastTokenError);
+      return null;
+    }
     return data.access_token || null;
-  } catch {
+  } catch (err) {
+    lastTokenError = "Сервер не может подключиться к Google (проверьте интернет/файрвол)";
+    console.error("[GoogleBusinessService] token fetch failed:", err);
     return null;
   }
 }
@@ -99,7 +108,7 @@ export async function checkConnection(): Promise<{
   result.tokenOk = !!token;
 
   if (!token) {
-    result.error = "Не удалось получить access_token — проверьте CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN";
+    result.error = `Не удалось получить access_token. ${lastTokenError}`;
     return result;
   }
 
@@ -118,7 +127,7 @@ export async function listAccounts(): Promise<{
 
   const token = await getAccessToken();
   if (!token) {
-    return { error: "Не удалось получить access_token" };
+    return { error: `Не удалось получить access_token. ${lastTokenError}` };
   }
 
   try {
@@ -158,7 +167,7 @@ export async function listLocations(accountId?: string): Promise<{
   const normalizedId = normalizeAccountId(rawId);
   const token = await getAccessToken();
   if (!token) {
-    return { error: "Не удалось получить access_token" };
+    return { error: `Не удалось получить access_token. ${lastTokenError}` };
   }
 
   try {
@@ -218,7 +227,7 @@ export async function getReviews(locationId: string) {
 
   const token = await getAccessToken();
   if (!token) {
-    return { reviews: [], error: "Нет доступа к Google: проверьте GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN" };
+    return { reviews: [], error: `Нет доступа к Google. ${lastTokenError}` };
   }
 
   try {
@@ -244,7 +253,7 @@ export async function replyToReview(locationId: string, reviewId: string, commen
 
   const token = await getAccessToken();
   if (!token) {
-    return { error: "Нет доступа к Google: проверьте GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN" };
+    return { error: `Нет доступа к Google. ${lastTokenError}` };
   }
 
   try {
@@ -275,7 +284,7 @@ export async function createPost(locationId: string, summary: string) {
 
   const token = await getAccessToken();
   if (!token) {
-    return { error: "Нет доступа к Google: проверьте GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN" };
+    return { error: `Нет доступа к Google. ${lastTokenError}` };
   }
 
   try {
