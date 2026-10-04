@@ -166,41 +166,68 @@ export async function listAccounts(): Promise<{
   }
 }
 
+type LocationInfo = {
+  name: string;
+  title: string;
+  accountName?: string;
+  phoneNumbers?: { primaryPhone?: string };
+  storefrontAddress?: { addressLines?: string[]; locality?: string };
+  metadata?: { mapsUri?: string; newReviewUri?: string };
+};
+
+// Without accountId, locations are collected from every account the token can access
 export async function listLocations(accountId?: string): Promise<{
-  locations?: Array<{ name: string; title: string; phoneNumbers?: { primaryPhone?: string }; storefrontAddress?: { addressLines?: string[]; locality?: string }; metadata?: { mapsUri?: string; newReviewUri?: string } }>;
+  locations?: LocationInfo[];
   warning?: string;
   error?: string;
 }> {
-  const rawId = accountId || GOOGLE_ACCOUNT_ID;
-  if (!rawId) {
-    return { error: "GOOGLE_ACCOUNT_ID не задан. Задайте его в .env или передайте accountId в запросе." };
-  }
-
-  const normalizedId = normalizeAccountId(rawId);
   const token = await getAccessToken();
   if (!token) {
     return { error: `Не удалось получить access_token. ${lastTokenError}` };
   }
 
   try {
-    const readMask = "name,title,phoneNumbers,storefrontAddress,metadata";
-    const res = await fetch(
-      `${BUSINESS_INFO_API}/${normalizedId}/locations?readMask=${encodeURIComponent(readMask)}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    if (!res.ok) {
-      let errMsg = `HTTP ${res.status}`;
-      try { const e = await res.json(); errMsg = e.error?.message || errMsg; } catch {}
-      return { error: errMsg };
+    let accountNames: string[];
+    if (accountId) {
+      accountNames = [normalizeAccountId(stripId(accountId))];
+    } else {
+      const accRes = await fetch(`${ACCOUNT_MANAGEMENT_API}/accounts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!accRes.ok) return { error: await googleError(accRes, "Не удалось получить список аккаунтов") };
+      const accData = await accRes.json();
+      accountNames = (accData.accounts || []).map((a: { name: string }) => a.name);
+      if (GOOGLE_ACCOUNT_ID) accountNames.push(normalizeAccountId(GOOGLE_ACCOUNT_ID));
+      accountNames = [...new Set(accountNames)];
     }
-    const data = await res.json();
 
-    const result: { locations?: Array<{ name: string; title: string; phoneNumbers?: { primaryPhone?: string }; storefrontAddress?: { addressLines?: string[]; locality?: string }; metadata?: { mapsUri?: string; newReviewUri?: string } }>; warning?: string } = {
-      locations: data.locations || [],
-    };
-    if (!GOOGLE_BUSINESS_ENABLED) {
-      result.warning = "GOOGLE_BUSINESS_ENABLED=false — интеграция отключена";
+    if (accountNames.length === 0) {
+      return { error: "Аккаунты не найдены. Проверьте, что Google-аккаунт токена имеет доступ к профилям." };
     }
+
+    const readMask = "name,title,phoneNumbers,storefrontAddress,metadata";
+    const locations: LocationInfo[] = [];
+    const errors: string[] = [];
+
+    for (const account of accountNames) {
+      const res = await fetch(
+        `${BUSINESS_INFO_API}/${account}/locations?readMask=${encodeURIComponent(readMask)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) {
+        errors.push(await googleError(res, account));
+        continue;
+      }
+      const data = await res.json();
+      for (const loc of data.locations || []) locations.push({ ...loc, accountName: account });
+    }
+
+    if (locations.length === 0 && errors.length > 0) return { error: errors.join("; ") };
+
+    const result: { locations: LocationInfo[]; warning?: string } = { locations };
+    const warnings = [...errors];
+    if (!GOOGLE_BUSINESS_ENABLED) warnings.push("GOOGLE_BUSINESS_ENABLED=false — интеграция отключена");
+    if (warnings.length) result.warning = warnings.join("; ");
     return result;
   } catch (err) {
     console.error("[GoogleBusinessService] listLocations error:", err);

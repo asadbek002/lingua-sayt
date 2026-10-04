@@ -33,6 +33,7 @@ type Account = {
 
 type Location = {
   name: string;
+  accountName?: string;
   title: string;
   phoneNumbers?: { primaryPhone?: string };
   storefrontAddress?: { addressLines?: string[]; locality?: string };
@@ -393,6 +394,11 @@ export default function AdminGoogleBusinessPage() {
                           <span className="text-xs font-mono text-gray-500 break-all">{loc.name}</span>
                           <CopyButton text={loc.name} />
                         </div>
+                        {loc.accountName && (
+                          <p className="text-xs text-gray-400 mt-1">
+                            Аккаунт: <span className="font-mono">{loc.accountName}</span>
+                          </p>
+                        )}
                       </div>
                     );
                   })}
