@@ -5,6 +5,7 @@ import PriceList from "@/components/PriceList";
 import Languages from "@/components/Languages";
 import Process from "@/components/Process";
 import Benefits from "@/components/Benefits";
+import Guarantees from "@/components/Guarantees";
 import GoogleReviews from "@/components/GoogleReviews";
 import ContactForm from "@/components/ContactForm";
 import ContactSection from "@/components/ContactSection";
@@ -35,6 +36,7 @@ export default function HomePage() {
         <Languages />
         <Process />
         <Benefits />
+        <Guarantees />
         <GoogleReviews />
         <ContactForm />
         <ContactSection />
