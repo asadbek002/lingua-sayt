@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { getAdminToken, clearAdminToken } from "@/lib/adminAuth";
+
+const subscribe = () => () => {};
 
 export function useAdminAuth() {
   const router = useRouter();
   const pathname = usePathname();
-  // Read sessionStorage once, synchronously, at component init — avoids setState-in-effect
-  const [token] = useState<string>(() => getAdminToken() ?? "");
+  // Server snapshot is "" so hydration matches; the client re-renders with the real token afterwards
+  const token = useSyncExternalStore(subscribe, () => getAdminToken() ?? "", () => "");
   const redirected = useRef(false);
 
   useEffect(() => {

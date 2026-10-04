@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { getAdminToken, setAdminToken } from "@/lib/adminAuth";
@@ -18,7 +18,11 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   // Lazy initializers — read from window/sessionStorage once at init, no setState in effects
   const [nextUrl] = useState<string>(getNextUrl);
-  const [alreadyAuthed] = useState<boolean>(() => !!getAdminToken());
+  const alreadyAuthed = useSyncExternalStore(
+    () => () => {},
+    () => !!getAdminToken(),
+    () => false
+  );
 
   useEffect(() => {
     // Only router navigation, never setState
