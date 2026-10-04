@@ -18,7 +18,7 @@ class LocalStorageService implements StorageService {
     this.uploadDir = path.join(process.cwd(), "uploads", "applications");
   }
 
-  async uploadFile(buffer: Buffer, filename: string, _mimeType: string): Promise<UploadResult> {
+  async uploadFile(buffer: Buffer, filename: string): Promise<UploadResult> {
     await fs.mkdir(this.uploadDir, { recursive: true });
 
     const timestamp = Date.now();

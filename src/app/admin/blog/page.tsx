@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, Plus, Edit, Eye, LogOut } from "lucide-react";
+import { Loader2, Plus, Eye, Trash2 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import AdminNav from "@/components/AdminNav";
 
 interface BlogPost {
   id: string;
@@ -34,6 +35,7 @@ export default function AdminBlogPage() {
   const [generating, setGenerating] = useState(false);
   const [form, setForm] = useState({ title: "", slug: "", description: "", content: "", status: "draft" });
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const fetchPosts = useCallback(async () => {
     const res = await fetch("/api/admin/blog", {
@@ -46,8 +48,18 @@ export default function AdminBlogPage() {
   }, [password]);
 
   useEffect(() => {
-    if (ready) fetchPosts();
-  }, [ready, fetchPosts]);
+    if (!ready) return;
+    let cancelled = false;
+    fetch("/api/admin/blog", { headers: { Authorization: `Bearer ${password}` } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && !cancelled) setPosts(data.posts);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, password]);
 
   const handleGenerate = async (title: string) => {
     setGenerating(true);
@@ -59,9 +71,10 @@ export default function AdminBlogPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${password}`,
         },
-        body: JSON.stringify({ action: "generate-faq", topic: title }),
+        body: JSON.stringify({ action: "generate-blog-draft", topic: title }),
       });
       const data = await res.json();
+      if (data.error) setError(data.error === "AI service is not enabled or configured" ? "AI не настроен: задайте AI_ENABLED=true и AI_API_KEY" : data.error);
       if (data.content) {
         setForm((f) => ({ ...f, content: data.content, slug: title.toLowerCase().replace(/[^a-z0-9а-яё\s]/gi, "").replace(/\s+/g, "-").slice(0, 60) }));
       }
@@ -81,7 +94,11 @@ export default function AdminBlogPage() {
         },
         body: JSON.stringify(form),
       });
-      if (res.ok) {
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setError(d.error || "Не удалось сохранить статью");
+      } else {
+        setError("");
         setShowForm(false);
         setForm({ title: "", slug: "", description: "", content: "", status: "draft" });
         await fetchPosts();
@@ -89,6 +106,12 @@ export default function AdminBlogPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Удалить статью «${title}»?`)) return;
+    await fetch(`/api/admin/blog?id=${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${password}` } });
+    await fetchPosts();
   };
 
   const handlePublish = async (id: string, currentStatus: string) => {
@@ -114,33 +137,18 @@ export default function AdminBlogPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-bold text-[#1a1a2e]">Блог</h1>
-          <p className="text-xs text-gray-400">Управление статьями</p>
-        </div>
-        <div className="flex gap-2">
-          <a href="/admin/applications" className="text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5">Заявки</a>
-          <a href="/admin/seo" className="text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5">SEO</a>
-          <a href="/admin/google-business" className="text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5">Google Business</a>
-          <button
-            onClick={logout}
-            title="Выйти"
-            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-red-500 px-3 py-1.5 rounded-lg hover:bg-gray-50"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setShowForm(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#c41e3a] text-white text-sm font-semibold rounded-lg hover:bg-[#a01830]"
-          >
-            <Plus className="w-4 h-4" />
-            Новая статья
-          </button>
-        </div>
-      </div>
+      <AdminNav title="Блог" subtitle="Управление статьями" onLogout={logout}>
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#c41e3a] text-white text-sm font-semibold rounded-lg hover:bg-[#a01830] ml-2"
+        >
+          <Plus className="w-4 h-4" />
+          Новая статья
+        </button>
+      </AdminNav>
 
       <div className="p-6">
+        {error && <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">{error}</div>}
         {/* Suggested Topics */}
         <div className="bg-white rounded-2xl border p-6 mb-6">
           <h2 className="font-bold text-[#1a1a2e] mb-4">Предлагаемые темы</h2>
@@ -179,6 +187,9 @@ export default function AdminBlogPage() {
                     </a>
                     <button onClick={() => handlePublish(post.id, post.status)} className="px-3 py-1 text-xs font-medium bg-white border border-gray-200 rounded-lg hover:border-[#c41e3a] hover:text-[#c41e3a]">
                       {post.status === "published" ? "Снять" : "Опубликовать"}
+                    </button>
+                    <button onClick={() => handleDelete(post.id, post.title)} className="p-1.5 hover:bg-red-50 rounded-lg" title="Удалить">
+                      <Trash2 className="w-4 h-4 text-red-400" />
                     </button>
                   </div>
                 </div>

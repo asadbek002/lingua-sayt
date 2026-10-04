@@ -87,3 +87,23 @@ export function breadcrumbSchema(items: { name: string; url: string }[]) {
     })),
   };
 }
+
+export function articleSchema(post: {
+  title: string;
+  description?: string | null;
+  slug: string;
+  publishedAt?: Date | null;
+  updatedAt: Date;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.description ?? undefined,
+    mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+    datePublished: post.publishedAt?.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
+    author: { "@type": "Organization", name: company.legalName },
+    publisher: { "@type": "Organization", name: company.legalName, url: SITE_URL },
+  };
+}

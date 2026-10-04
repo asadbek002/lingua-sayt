@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { applicationSchema } from "@/lib/validations/applicationSchema";
 import { storageService } from "@/lib/services/storageService";
 import { sendAllNotifications } from "@/lib/services/notificationService";
-import { validateFileType, validateFileSize } from "@/lib/utils/fileValidation";
+import { validateFileType, validateFileSize, validateFileExtension, matchesMagicBytes } from "@/lib/utils/fileValidation";
 import { checkRateLimit } from "@/lib/utils/rateLimit";
 import { sanitizeFormData } from "@/lib/utils/sanitize";
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for") || "unknown";
+  const ip = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for")?.split(",").pop()?.trim() || "unknown";
   const rateCheck = checkRateLimit(ip);
 
   if (!rateCheck.allowed) {
@@ -48,10 +48,11 @@ export async function POST(req: NextRequest) {
     let fileName: string | undefined;
     let fileType: string | undefined;
     let fileSize: number | undefined;
+    let fileBuffer: Buffer | undefined;
 
     const file = formData.get("file") as File | null;
     if (file && file.size > 0) {
-      if (!validateFileType(file.type)) {
+      if (!validateFileType(file.type) || !validateFileExtension(file.name)) {
         return NextResponse.json(
           { success: false, message: "Неподдерживаемый тип файла" },
           { status: 400 }
@@ -65,8 +66,14 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const uploadResult = await storageService.uploadFile(buffer, file.name, file.type);
+      fileBuffer = Buffer.from(await file.arrayBuffer());
+      if (!matchesMagicBytes(fileBuffer, file.type)) {
+        return NextResponse.json(
+          { success: false, message: "Содержимое файла не соответствует его типу" },
+          { status: 400 }
+        );
+      }
+      const uploadResult = await storageService.uploadFile(fileBuffer, file.name, file.type);
 
       fileUrl = uploadResult.fileUrl;
       fileName = file.name;
@@ -89,13 +96,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const fileBuffer = file && file.size > 0
-      ? Buffer.from(await file.arrayBuffer())
-      : undefined;
-
-    sendAllNotifications(application, fileBuffer).catch((err) => {
-      console.error("[API/applications] Notification error:", err);
-    });
+    // after() keeps the work alive on serverless runtimes after the response is sent
+    after(() =>
+      sendAllNotifications(application, fileBuffer).catch((err) => {
+        console.error("[API/applications] Notification error:", err);
+      })
+    );
 
     return NextResponse.json({
       success: true,

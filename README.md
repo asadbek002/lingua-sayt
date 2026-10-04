@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lingua Translation
 
-## Getting Started
+Next.js 16 site for a translation bureau (Namangan / Tashkent) with a lead form and an admin panel.
 
-First, run the development server:
+## Setup
 
 ```bash
+cp .env.example .env      # fill DATABASE_URL and ADMIN_PASSWORD at minimum
+npm install               # also runs `prisma generate`
+npx prisma migrate deploy # create tables
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Admin panel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`/admin` — log in with `ADMIN_PASSWORD`. Sections: applications (filters, search, pagination, file viewer),
+blog, SEO/AI tools, Google Business.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If login says "ADMIN_PASSWORD is not set", add the variable to your hosting environment and redeploy.
+If the applications page shows a database error, check `DATABASE_URL` and run `npx prisma migrate deploy`.
 
-## Learn More
+## Notes
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Uploaded files are stored on local disk (`uploads/`). On serverless / ephemeral hosting switch
+  `storageService` to S3/R2 — files are lost on redeploy otherwise.
+- The in-memory rate limiter is per-process.

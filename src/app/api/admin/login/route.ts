@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/serverAuth";
-import { checkConnection } from "@/lib/services/googleBusinessService";
 
+// Lightweight credential check that does not touch the database.
 export async function GET(req: NextRequest) {
   const denied = requireAdmin(req);
   if (denied) return denied;
-
-  const result = await checkConnection();
-  return NextResponse.json(result);
+  return NextResponse.json({ ok: true });
 }

@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next";
+import { prisma } from "@/lib/prisma";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://linguatranslation.uz";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   const staticPages = [
@@ -19,17 +22,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/koreys-tiliga-tarjima`, priority: 0.8 },
     { url: `${SITE_URL}/rus-tiliga-tarjima`, priority: 0.8 },
     { url: `${SITE_URL}/blog`, priority: 0.7 },
-    { url: `${SITE_URL}/landing/notarial-tarjima`, priority: 0.7 },
-    { url: `${SITE_URL}/landing/apostil`, priority: 0.7 },
-    { url: `${SITE_URL}/landing/diplom-tarjimasi`, priority: 0.7 },
-    { url: `${SITE_URL}/landing/tarjima-namangan`, priority: 0.7 },
-    { url: `${SITE_URL}/landing/tarjima-tashkent`, priority: 0.7 },
   ];
 
-  return staticPages.map((page) => ({
-    url: page.url,
-    lastModified: now,
-    changeFrequency: "weekly" as const,
-    priority: page.priority,
-  }));
+  let posts: { slug: string; updatedAt: Date }[] = [];
+  try {
+    posts = await prisma.blogPost.findMany({
+      where: { status: "published" },
+      select: { slug: true, updatedAt: true },
+    });
+  } catch {
+    // DB unavailable at build time — static pages only
+  }
+
+  return [
+    ...staticPages.map((page) => ({
+      url: page.url,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: page.priority,
+    })),
+    ...posts.map((post) => ({
+      url: `${SITE_URL}/blog/${post.slug}`,
+      lastModified: post.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+  ];
 }

@@ -61,13 +61,3 @@ export async function sendWhatsAppNotification(
     return "FAILED";
   }
 }
-
-// Placeholder for future file sending
-export async function sendWhatsAppDocument(
-  _application: Application,
-  _fileBuffer: Buffer,
-  _filename: string
-): Promise<boolean> {
-  // TODO: Implement WhatsApp document sending via Media API
-  return false;
-}

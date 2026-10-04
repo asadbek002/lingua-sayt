@@ -1,35 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/serverAuth";
 import { prisma } from "@/lib/prisma";
 import {
   generateSeoTitle,
   generateSeoDescription,
   generateFaq,
   generateGoogleBusinessPost,
+  generateBlogPostDraft,
 } from "@/lib/services/aiContentService";
 
-function checkAdminAuth(req: NextRequest): boolean {
-  const authHeader = req.headers.get("authorization");
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
-  if (!authHeader) return false;
-  return authHeader === `Bearer ${ADMIN_PASSWORD}`;
-}
-
 export async function GET(req: NextRequest) {
-  if (!checkAdminAuth(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const denied = requireAdmin(req);
+  if (denied) return denied;
+
+  try {
+    const tasks = await prisma.seoTask.findMany({ orderBy: { createdAt: "desc" } });
+    return NextResponse.json({ tasks });
+  } catch (err) {
+    console.error("[API/admin/seo] GET error:", err);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
-
-  const tasks = await prisma.seoTask.findMany({
-    orderBy: { createdAt: "desc" },
-  });
-
-  return NextResponse.json({ tasks });
 }
 
 export async function POST(req: NextRequest) {
-  if (!checkAdminAuth(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = requireAdmin(req);
+  if (denied) return denied;
 
   const body = await req.json();
   const { action, service, city, topic } = body;
@@ -47,6 +42,11 @@ export async function POST(req: NextRequest) {
 
     if (action === "generate-faq") {
       const result = await generateFaq(topic || service);
+      return NextResponse.json(result);
+    }
+
+    if (action === "generate-blog-draft") {
+      const result = await generateBlogPostDraft(topic || service);
       return NextResponse.json(result);
     }
 

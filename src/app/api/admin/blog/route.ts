@@ -1,30 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/serverAuth";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-function checkAdminAuth(req: NextRequest): boolean {
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-  if (!ADMIN_PASSWORD) return false;
-  const authHeader = req.headers.get("authorization");
-  if (!authHeader) return false;
-  return authHeader === `Bearer ${ADMIN_PASSWORD}`;
-}
-
 export async function GET(req: NextRequest) {
-  if (!checkAdminAuth(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const denied = requireAdmin(req);
+  if (denied) return denied;
+
+  try {
+    const posts = await prisma.blogPost.findMany({ orderBy: { createdAt: "desc" } });
+    return NextResponse.json({ posts });
+  } catch (err) {
+    console.error("[API/admin/blog] GET error:", err);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
-
-  const posts = await prisma.blogPost.findMany({
-    orderBy: { createdAt: "desc" },
-  });
-
-  return NextResponse.json({ posts });
 }
 
 export async function POST(req: NextRequest) {
-  if (!checkAdminAuth(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = requireAdmin(req);
+  if (denied) return denied;
 
   const body = await req.json();
   const { title, slug, description, content, faq, status } = body;
@@ -47,15 +41,18 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, post });
-  } catch {
-    return NextResponse.json({ error: "Slug already exists" }, { status: 409 });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+      return NextResponse.json({ error: "Slug already exists" }, { status: 409 });
+    }
+    console.error("[API/admin/blog] POST error:", err);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!checkAdminAuth(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = requireAdmin(req);
+  if (denied) return denied;
 
   const body = await req.json();
   const { id, title, slug, description, content, faq, status } = body;
@@ -69,12 +66,35 @@ export async function PATCH(req: NextRequest) {
   if (content !== undefined) updateData.content = content;
   if (faq !== undefined) updateData.faq = faq;
   if (status !== undefined) updateData.status = status;
-  updateData.publishedAt = status === "published" ? new Date() : undefined;
+  if (status === "published") {
+    const existing = await prisma.blogPost.findUnique({ where: { id }, select: { publishedAt: true } });
+    if (!existing?.publishedAt) updateData.publishedAt = new Date();
+  }
 
-  const post = await prisma.blogPost.update({
-    where: { id },
-    data: updateData,
-  });
+  try {
+    const post = await prisma.blogPost.update({ where: { id }, data: updateData });
+    return NextResponse.json({ success: true, post });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === "P2025") return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      if (err.code === "P2002") return NextResponse.json({ error: "Slug already exists" }, { status: 409 });
+    }
+    console.error("[API/admin/blog] PATCH error:", err);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
+  }
+}
 
-  return NextResponse.json({ success: true, post });
+export async function DELETE(req: NextRequest) {
+  const denied = requireAdmin(req);
+  if (denied) return denied;
+
+  const id = new URL(req.url).searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+  try {
+    await prisma.blogPost.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Post not found" }, { status: 404 });
+  }
 }

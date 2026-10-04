@@ -1,5 +1,3 @@
-import { FileText, Stamp, GraduationCap, Heart, Stethoscope, BookOpen } from "lucide-react";
-
 export const services = [
   {
     id: "notarial",

@@ -58,7 +58,11 @@ export async function sendTelegramNotification(
     return "SKIPPED";
   }
 
-  const message = formatTelegramMessage(application);
+  // parse_mode is HTML, so user-supplied text must be escaped
+  const message = formatTelegramMessage(application)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
   let allSuccess = true;
 
   for (const chatId of ADMIN_CHAT_IDS) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { requireAdmin } from "@/lib/serverAuth";
 
 export async function GET(
   req: NextRequest,
@@ -10,17 +11,14 @@ export async function GET(
   const safeFilename = path.basename(filename);
   const filePath = path.join(process.cwd(), "uploads", "applications", safeFilename);
 
+  const denied = requireAdmin(req);
+  if (denied) return denied;
+
   if (!fs.existsSync(filePath)) {
     return NextResponse.json({ error: "File not found" }, { status: 404 });
   }
 
-  const authHeader = req.headers.get("authorization");
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
-  if (!authHeader || authHeader !== `Bearer ${ADMIN_PASSWORD}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const fileBuffer = fs.readFileSync(filePath);
+  const fileBuffer = await fs.promises.readFile(filePath);
   const ext = path.extname(safeFilename).toLowerCase();
 
   const contentTypes: Record<string, string> = {
@@ -38,6 +36,7 @@ export async function GET(
     headers: {
       "Content-Type": contentType,
       "Content-Disposition": `inline; filename="${safeFilename}"`,
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }

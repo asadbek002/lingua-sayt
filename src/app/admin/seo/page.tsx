@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, RefreshCw, Sparkles, LogOut } from "lucide-react";
+import { Loader2, RefreshCw, Sparkles } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import AdminNav from "@/components/AdminNav";
 
 const SEO_PAGES = [
   { title: "Notarial tarjima", slug: "/notarial-tarjima", service: "Нотариальный перевод" },
@@ -18,7 +19,6 @@ const SEO_PAGES = [
 export default function AdminSeoPage() {
   const { password, ready, logout } = useAdminAuth();
   const [tasks, setTasks] = useState<{ id: string; title: string; status: string; type: string; createdAt: string }[]>([]);
-  const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, string>>({});
 
@@ -33,8 +33,18 @@ export default function AdminSeoPage() {
   }, [password]);
 
   useEffect(() => {
-    if (ready) fetchTasks();
-  }, [ready, fetchTasks]);
+    if (!ready) return;
+    let cancelled = false;
+    fetch("/api/admin/seo", { headers: { Authorization: `Bearer ${password}` } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && !cancelled) setTasks(data.tasks);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, password]);
 
   const handleGenerate = async (action: string, page: (typeof SEO_PAGES)[0]) => {
     setGenerating(`${action}-${page.slug}`);
@@ -68,27 +78,11 @@ export default function AdminSeoPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-bold text-[#1a1a2e]">SEO Панель</h1>
-          <p className="text-xs text-gray-400">Управление SEO-страницами и AI-контентом</p>
-        </div>
-        <div className="flex gap-2">
-          <a href="/admin/applications" className="text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5">Заявки</a>
-          <a href="/admin/blog" className="text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5">Блог</a>
-          <a href="/admin/google-business" className="text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5">Google Business</a>
-          <button onClick={fetchTasks} className="flex items-center gap-1 text-sm text-gray-500 px-3 py-1.5 hover:text-[#c41e3a]">
-            <RefreshCw className="w-4 h-4" /> Обновить
-          </button>
-          <button
-            onClick={logout}
-            title="Выйти"
-            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-red-500 px-3 py-1.5 rounded-lg hover:bg-gray-50"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+      <AdminNav title="SEO Панель" subtitle="Управление SEO-страницами и AI-контентом" onLogout={logout}>
+        <button onClick={fetchTasks} className="flex items-center gap-1 text-sm text-gray-500 px-3 py-1.5 hover:text-[#c41e3a]">
+          <RefreshCw className="w-4 h-4" /> Обновить
+        </button>
+      </AdminNav>
 
       <div className="p-6 space-y-6">
         {/* SEO Tasks */}

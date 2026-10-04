@@ -35,12 +35,14 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/admin/applications", {
+      const res = await fetch("/api/admin/login", {
         headers: { Authorization: `Bearer ${password}` },
       });
       if (res.ok) {
         setAdminToken(password);
         router.replace(nextUrl);
+      } else if (res.status === 503) {
+        setError("На сервере не задана переменная ADMIN_PASSWORD");
       } else {
         setError("Неверный пароль");
       }

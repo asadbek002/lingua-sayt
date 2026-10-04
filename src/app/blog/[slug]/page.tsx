@@ -5,6 +5,9 @@ import Footer from "@/components/Footer";
 import { prisma } from "@/lib/prisma";
 import { Calendar, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { articleSchema, faqSchema } from "@/lib/seo/jsonLd";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://linguatranslation.uz";
 
 export const revalidate = 3600;
 
@@ -30,9 +33,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Статья не найдена" };
   }
 
+  const url = `${SITE_URL}/blog/${post.slug}`;
   return {
     title: `${post.title} | Lingua Translation`,
     description: post.description || "",
+    alternates: { canonical: url },
+    openGraph: {
+      title: post.title,
+      description: post.description || "",
+      url,
+      type: "article",
+      publishedTime: post.publishedAt?.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+    },
   };
 }
 
@@ -48,6 +61,14 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            [articleSchema(post), faqs && faqs.length > 0 ? faqSchema(faqs) : null].filter(Boolean)
+          ).replace(/</g, "\\u003c"),
+        }}
+      />
       <Header />
       <main className="pt-16">
         <article className="py-14">
@@ -104,12 +125,12 @@ export default async function BlogPostPage({ params }: PageProps) {
               <p className="text-sm text-gray-600 mb-4">
                 Оставьте заявку — мы свяжемся с вами в течение нескольких минут.
               </p>
-              <a
+              <Link
                 href="/#application"
                 className="inline-flex items-center px-5 py-2.5 bg-[#c41e3a] text-white font-semibold text-sm rounded-xl hover:bg-[#a01830] transition-colors"
               >
                 Оставить заявку
-              </a>
+              </Link>
             </div>
           </div>
         </article>

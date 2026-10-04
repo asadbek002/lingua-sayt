@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, Star, Send, RefreshCw, CheckCircle, XCircle, Copy, Check, LogOut } from "lucide-react";
+import { Loader2, Star, Send, RefreshCw, CheckCircle, XCircle, Copy, Check } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import AdminNav from "@/components/AdminNav";
 
 const POST_TOPICS = [
   "Нотариальный перевод документов",
@@ -60,7 +61,7 @@ export default function AdminGoogleBusinessPage() {
   const { password, ready, logout } = useAdminAuth();
   const [office, setOffice] = useState<"namangan" | "tashkent">("namangan");
   const [reviews, setReviews] = useState<{ reviewId: string; reviewer: { displayName: string }; starRating: string; comment?: string; createTime: string }[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [postTopic, setPostTopic] = useState("");
   const [postContent, setPostContent] = useState("");
   const [generatingPost, setGeneratingPost] = useState(false);
@@ -76,7 +77,6 @@ export default function AdminGoogleBusinessPage() {
   const [locationsResult, setLocationsResult] = useState<{ locations?: Location[]; warning?: string; error?: string } | null>(null);
 
   const fetchReviews = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await fetch(`/api/admin/google-business?office=${office}`, {
         headers: { Authorization: `Bearer ${password}` },
@@ -91,8 +91,19 @@ export default function AdminGoogleBusinessPage() {
   }, [office, password]);
 
   useEffect(() => {
-    if (ready) fetchReviews();
-  }, [ready, fetchReviews]);
+    if (!ready) return;
+    let cancelled = false;
+    fetch(`/api/admin/google-business?office=${office}`, { headers: { Authorization: `Bearer ${password}` } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && !cancelled) setReviews(data.reviews || []);
+      })
+      .catch(() => {})
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, office, password]);
 
   const handleCheckConnection = async () => {
     setCheckLoading(true);
@@ -230,24 +241,7 @@ export default function AdminGoogleBusinessPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-bold text-[#1a1a2e]">Google Business</h1>
-          <p className="text-xs text-gray-400">Управление профилями и отзывами</p>
-        </div>
-        <div className="flex gap-2">
-          <a href="/admin/applications" className="text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5">Заявки</a>
-          <a href="/admin/seo" className="text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5">SEO</a>
-          <a href="/admin/blog" className="text-sm text-gray-500 hover:text-[#c41e3a] px-3 py-1.5">Блог</a>
-          <button
-            onClick={logout}
-            title="Выйти"
-            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-red-500 px-3 py-1.5 rounded-lg hover:bg-gray-50"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+      <AdminNav title="Google Business" subtitle="Управление профилями и отзывами" onLogout={logout}></AdminNav>
 
       <div className="p-6 space-y-6">
 

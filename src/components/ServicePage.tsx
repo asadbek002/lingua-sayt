@@ -27,7 +27,6 @@ interface ServicePageProps {
 }
 
 export default function ServicePage({
-  title,
   h1,
   description,
   benefits,

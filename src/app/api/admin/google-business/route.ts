@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/serverAuth";
 import {
   getReviews,
   replyToReview,
@@ -7,18 +8,9 @@ import {
 } from "@/lib/services/googleBusinessService";
 import { generateReviewResponse, generateGoogleBusinessPost } from "@/lib/services/aiContentService";
 
-function checkAdminAuth(req: NextRequest): boolean {
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-  if (!ADMIN_PASSWORD) return false;
-  const authHeader = req.headers.get("authorization");
-  if (!authHeader) return false;
-  return authHeader === `Bearer ${ADMIN_PASSWORD}`;
-}
-
 export async function GET(req: NextRequest) {
-  if (!checkAdminAuth(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = requireAdmin(req);
+  if (denied) return denied;
 
   const { searchParams } = new URL(req.url);
   const office = searchParams.get("office") || "namangan";
@@ -30,9 +22,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!checkAdminAuth(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = requireAdmin(req);
+  if (denied) return denied;
 
   const body = await req.json();
   const { action, office, reviewId, reviewText, rating, topic, postContent } = body;
