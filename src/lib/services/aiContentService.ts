@@ -1,40 +1,52 @@
-const AI_ENABLED = process.env.AI_ENABLED === "true";
-const AI_API_KEY = process.env.AI_API_KEY || "";
-const AI_MODEL = process.env.AI_MODEL || "gpt-4o-mini";
-
 interface AiResponse {
   content: string;
   error?: string;
 }
 
 async function callAI(prompt: string): Promise<AiResponse> {
-  if (!AI_ENABLED || !AI_API_KEY) {
-    return { content: "", error: "AI service is not enabled or configured" };
+  // Read env at call time; AI is on whenever a key is present unless AI_ENABLED=false
+  const apiKey = process.env.AI_API_KEY || "";
+  const enabled = process.env.AI_ENABLED !== "false" && !!apiKey;
+  const provider = (process.env.AI_PROVIDER || "anthropic").toLowerCase();
+  const model = process.env.AI_MODEL || (provider === "openai" ? "gpt-4o-mini" : "claude-sonnet-5-5");
+
+  if (!enabled) {
+    return { content: "", error: "AI не настроен: задайте AI_API_KEY в .env (и не ставьте AI_ENABLED=false)" };
   }
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${AI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: AI_MODEL,
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 1000,
-      }),
-    });
+    const res =
+      provider === "openai"
+        ? await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+            body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], max_tokens: 1500 }),
+          })
+        : await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": apiKey,
+              "anthropic-version": "2023-06-01",
+            },
+            body: JSON.stringify({ model, max_tokens: 1500, messages: [{ role: "user", content: prompt }] }),
+          });
 
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      return { content: "", error: "AI API error" };
+      const detail = data?.error?.message || `HTTP ${res.status}`;
+      console.error("[AiContentService] API error:", res.status, detail);
+      return { content: "", error: `AI API: ${detail}` };
     }
 
-    const data = await res.json();
-    return { content: data.choices?.[0]?.message?.content || "" };
+    const content =
+      provider === "openai"
+        ? data.choices?.[0]?.message?.content
+        : data.content?.find((b: { type: string }) => b.type === "text")?.text;
+    return { content: content || "" };
   } catch (err) {
     console.error("[AiContentService] error:", err);
-    return { content: "", error: "AI service unavailable" };
+    return { content: "", error: "AI сервис недоступен (проверьте доступ сервера в интернет)" };
   }
 }
 

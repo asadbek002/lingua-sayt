@@ -62,6 +62,7 @@ export default function AdminGoogleBusinessPage() {
   const [office, setOffice] = useState<"namangan" | "tashkent">("namangan");
   const [reviews, setReviews] = useState<{ reviewId: string; reviewer: { displayName: string }; starRating: string; comment?: string; createTime: string }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState("");
   const [postTopic, setPostTopic] = useState("");
   const [postContent, setPostContent] = useState("");
   const [generatingPost, setGeneratingPost] = useState(false);
@@ -81,10 +82,9 @@ export default function AdminGoogleBusinessPage() {
       const res = await fetch(`/api/admin/google-business?office=${office}`, {
         headers: { Authorization: `Bearer ${password}` },
       });
-      if (res.ok) {
-        const data = await res.json();
-        setReviews(data.reviews || []);
-      }
+      const data = await res.json().catch(() => ({}));
+      setReviews(data.reviews || []);
+      setNotice(data.error || (res.ok ? "" : `Ошибка сервера (${res.status})`));
     } finally {
       setLoading(false);
     }
@@ -94,9 +94,11 @@ export default function AdminGoogleBusinessPage() {
     if (!ready) return;
     let cancelled = false;
     fetch(`/api/admin/google-business?office=${office}`, { headers: { Authorization: `Bearer ${password}` } })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && !cancelled) setReviews(data.reviews || []);
+      .then(async (res) => ({ res, data: await res.json().catch(() => ({})) }))
+      .then(({ res, data }) => {
+        if (cancelled) return;
+        setReviews(data.reviews || []);
+        setNotice(data.error || (res.ok ? "" : `Ошибка сервера (${res.status})`));
       })
       .catch(() => {})
       .finally(() => !cancelled && setLoading(false));
@@ -160,6 +162,7 @@ export default function AdminGoogleBusinessPage() {
       });
       const data = await res.json();
       if (data.content) setPostContent(data.content);
+      setNotice(data.error || "");
     } finally {
       setGeneratingPost(false);
     }
@@ -204,6 +207,7 @@ export default function AdminGoogleBusinessPage() {
       if (data.content) {
         setReviewResponses((prev) => ({ ...prev, [reviewId]: data.content }));
       }
+      setNotice(data.error || "");
     } finally {
       setGeneratingReview(null);
     }
@@ -244,6 +248,9 @@ export default function AdminGoogleBusinessPage() {
       <AdminNav title="Google Business" subtitle="Управление профилями и отзывами" onLogout={logout}></AdminNav>
 
       <div className="p-6 space-y-6">
+        {notice && (
+          <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">{notice}</div>
+        )}
 
         {/* Google Business Connection Block */}
         <div className="bg-white rounded-2xl border p-6">

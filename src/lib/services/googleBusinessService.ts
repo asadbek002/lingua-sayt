@@ -1,7 +1,9 @@
-const GOOGLE_BUSINESS_ENABLED = process.env.GOOGLE_BUSINESS_ENABLED === "true";
-const GOOGLE_ACCOUNT_ID = process.env.GOOGLE_ACCOUNT_ID || "";
-const GOOGLE_LOCATION_ID_NAMANGAN = process.env.GOOGLE_LOCATION_ID_NAMANGAN || "";
-const GOOGLE_LOCATION_ID_TASHKENT = process.env.GOOGLE_LOCATION_ID_TASHKENT || "";
+// On by default when credentials exist; set GOOGLE_BUSINESS_ENABLED=false to switch off
+const GOOGLE_BUSINESS_ENABLED = process.env.GOOGLE_BUSINESS_ENABLED !== "false";
+const stripId = (v: string) => v.replace(/^accounts\//, "").replace(/^locations\//, "");
+const GOOGLE_ACCOUNT_ID = stripId(process.env.GOOGLE_ACCOUNT_ID || "");
+const GOOGLE_LOCATION_ID_NAMANGAN = stripId(process.env.GOOGLE_LOCATION_ID_NAMANGAN || "");
+const GOOGLE_LOCATION_ID_TASHKENT = stripId(process.env.GOOGLE_LOCATION_ID_TASHKENT || "");
 
 const GBP_API = "https://mybusiness.googleapis.com/v4";
 const ACCOUNT_MANAGEMENT_API = "https://mybusinessaccountmanagement.googleapis.com/v1";
@@ -10,6 +12,21 @@ const BUSINESS_INFO_API = "https://mybusinessbusinessinformation.googleapis.com/
 function normalizeAccountId(accountId: string): string {
   if (!accountId) return "";
   return accountId.startsWith("accounts/") ? accountId : `accounts/${accountId}`;
+}
+
+async function googleError(res: Response, fallback: string): Promise<string> {
+  try {
+    const e = await res.json();
+    return `${fallback}: ${e.error?.message || `HTTP ${res.status}`}`;
+  } catch {
+    return `${fallback}: HTTP ${res.status}`;
+  }
+}
+
+function missingConfig(locationId: string): string | null {
+  if (!GOOGLE_ACCOUNT_ID) return "Не задан GOOGLE_ACCOUNT_ID в .env";
+  if (!locationId) return "Не задан ID офиса (GOOGLE_LOCATION_ID_NAMANGAN / GOOGLE_LOCATION_ID_TASHKENT) в .env";
+  return null;
 }
 
 async function getAccessToken(): Promise<string | null> {
@@ -194,12 +211,14 @@ export async function getBusinessProfile(locationId: string) {
 
 export async function getReviews(locationId: string) {
   if (!GOOGLE_BUSINESS_ENABLED) {
-    return { reviews: [], error: "Google Business integration is disabled" };
+    return { reviews: [], error: "Интеграция отключена (GOOGLE_BUSINESS_ENABLED=false)" };
   }
+  const missing = missingConfig(locationId);
+  if (missing) return { reviews: [], error: missing };
 
   const token = await getAccessToken();
   if (!token) {
-    return { reviews: [], error: "Google Business credentials not configured" };
+    return { reviews: [], error: "Нет доступа к Google: проверьте GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN" };
   }
 
   try {
@@ -207,6 +226,7 @@ export async function getReviews(locationId: string) {
       `${GBP_API}/accounts/${GOOGLE_ACCOUNT_ID}/locations/${locationId}/reviews`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
+    if (!res.ok) return { reviews: [], error: await googleError(res, "Google API") };
     const data = await res.json();
     return { reviews: data.reviews || [] };
   } catch (err) {
@@ -217,12 +237,14 @@ export async function getReviews(locationId: string) {
 
 export async function replyToReview(locationId: string, reviewId: string, comment: string) {
   if (!GOOGLE_BUSINESS_ENABLED) {
-    return { error: "Google Business integration is disabled" };
+    return { error: "Интеграция отключена (GOOGLE_BUSINESS_ENABLED=false)" };
   }
+  const missing = missingConfig(locationId);
+  if (missing) return { error: missing };
 
   const token = await getAccessToken();
   if (!token) {
-    return { error: "Google Business credentials not configured" };
+    return { error: "Нет доступа к Google: проверьте GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN" };
   }
 
   try {
@@ -237,7 +259,7 @@ export async function replyToReview(locationId: string, reviewId: string, commen
         body: JSON.stringify({ comment }),
       }
     );
-    return res.ok ? { success: true } : { error: "Failed to post reply" };
+    return res.ok ? { success: true } : { error: await googleError(res, "Не удалось отправить ответ") };
   } catch (err) {
     console.error("[GoogleBusinessService] replyToReview error:", err);
     return { error: "Failed to post reply" };
@@ -246,12 +268,14 @@ export async function replyToReview(locationId: string, reviewId: string, commen
 
 export async function createPost(locationId: string, summary: string) {
   if (!GOOGLE_BUSINESS_ENABLED) {
-    return { error: "Google Business integration is disabled" };
+    return { error: "Интеграция отключена (GOOGLE_BUSINESS_ENABLED=false)" };
   }
+  const missing = missingConfig(locationId);
+  if (missing) return { error: missing };
 
   const token = await getAccessToken();
   if (!token) {
-    return { error: "Google Business credentials not configured" };
+    return { error: "Нет доступа к Google: проверьте GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN" };
   }
 
   try {
@@ -266,7 +290,7 @@ export async function createPost(locationId: string, summary: string) {
         body: JSON.stringify({ languageCode: "ru", summary, topicType: "STANDARD" }),
       }
     );
-    return res.ok ? { success: true } : { error: "Failed to create post" };
+    return res.ok ? { success: true } : { error: await googleError(res, "Не удалось опубликовать пост") };
   } catch (err) {
     console.error("[GoogleBusinessService] createPost error:", err);
     return { error: "Failed to create post" };
