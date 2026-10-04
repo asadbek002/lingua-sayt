@@ -75,6 +75,8 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
   const sessionId = searchParams.get("sessionId") ?? "";
+  // availability probe used by the widget (no session yet)
+  if (!searchParams.has("sessionId")) return NextResponse.json({ ok: true });
   const afterId = Math.max(parseInt(searchParams.get("after") || "0") || 0, 0);
   if (!SESSION_ID_RE.test(sessionId)) {
     return NextResponse.json({ error: "Invalid session" }, { status: 400 });

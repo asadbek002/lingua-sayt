@@ -22,6 +22,11 @@ export function isCrmChatConfigured(): boolean {
 
 export const SESSION_ID_RE = /^[A-Za-z0-9_-]{16,64}$/;
 
+async function crmError(res: Response): Promise<Error> {
+  const body = (await res.text().catch(() => "")).slice(0, 200);
+  return new Error(`CRM responded ${res.status} ${res.statusText}: ${body}`);
+}
+
 async function crmFetch(path: string, init: RequestInit = {}): Promise<Response> {
   const cfg = config();
   if (!cfg) throw new Error("CRM chat is not configured (CRM_API_URL / CRM_WEBHOOK_SECRET)");
@@ -43,14 +48,14 @@ export async function sendVisitorMessage(
     method: "POST",
     body: JSON.stringify({ text, name: name || "", phone: phone || "" }),
   });
-  if (!res.ok) throw new Error(`CRM responded ${res.status}`);
+  if (!res.ok) throw await crmError(res);
   const data = await res.json();
   return data.id as number;
 }
 
 export async function fetchChatMessages(sessionId: string, afterId: number): Promise<ChatMessage[]> {
   const res = await crmFetch(`/web-chat/web_${sessionId}/messages?after_id=${afterId}`);
-  if (!res.ok) throw new Error(`CRM responded ${res.status}`);
+  if (!res.ok) throw await crmError(res);
   const data = await res.json();
   return data.messages as ChatMessage[];
 }
