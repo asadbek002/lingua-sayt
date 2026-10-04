@@ -63,4 +63,21 @@ model BlogPost {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   publishedAt DateTime?
+  translations BlogPostTranslation[]
+}
+
+// The base fields of BlogPost hold the Russian (default) version; other site languages live here.
+model BlogPostTranslation {
+  id          String   @id @default(cuid())
+  postId      String
+  locale      String
+  title       String
+  description String?
+  content     String
+  faq         Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  post        BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, locale])
 }

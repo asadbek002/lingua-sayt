@@ -12,6 +12,11 @@ export type TranslationSchema = {
     home: string; services: string; prices: string; languages: string;
     process: string; benefits: string; contacts: string; blog: string; apply: string; telegram: string;
   };
+  blog: {
+    badge: string; title: string; subtitle: string; empty: string;
+    back: string; faq: string; ctaTitle: string; ctaText: string; ctaButton: string;
+    latestBadge: string; latestTitle: string; allPosts: string; dateLocale: string;
+  };
   hero: {
     badge: string; title: string; subtitle: string;
     primaryButton: string; telegramButton: string; officesButton: string;
@@ -93,6 +98,16 @@ const ru: TranslationSchema = {
     home: "Главная", services: "Услуги", prices: "Цены", languages: "Языки",
     process: "Как мы работаем", benefits: "Почему мы", blog: "Блог", contacts: "Контакты",
     apply: "Оставить заявку", telegram: "Telegram",
+  },
+  blog: {
+    badge: "Блог", title: "Полезные статьи о переводе",
+    subtitle: "Советы, инструкции и ответы на частые вопросы о переводе документов",
+    empty: "Статьи скоро появятся.",
+    back: "Назад к блогу", faq: "Часто задаваемые вопросы",
+    ctaTitle: "Нужна помощь с переводом?",
+    ctaText: "Оставьте заявку — мы свяжемся с вами в течение нескольких минут.",
+    ctaButton: "Оставить заявку",
+    latestBadge: "Блог", latestTitle: "Полезные статьи", allPosts: "Все статьи", dateLocale: "ru-RU",
   },
   hero: {
     badge: "Lingua Translation",
@@ -264,6 +279,16 @@ const uz: TranslationSchema = {
     process: "Ish jarayoni", benefits: "Afzalliklar", blog: "Blog", contacts: "Aloqa",
     apply: "Ariza qoldirish", telegram: "Telegram",
   },
+  blog: {
+    badge: "Blog", title: "Tarjima haqida foydali maqolalar",
+    subtitle: "Hujjatlar tarjimasi bo'yicha maslahatlar, ko'rsatmalar va tez-tez beriladigan savollarga javoblar",
+    empty: "Maqolalar tez orada paydo bo'ladi.",
+    back: "Blogga qaytish", faq: "Tez-tez so'raladigan savollar",
+    ctaTitle: "Tarjima bo'yicha yordam kerakmi?",
+    ctaText: "Ariza qoldiring — biz siz bilan bir necha daqiqa ichida bog'lanamiz.",
+    ctaButton: "Ariza qoldirish",
+    latestBadge: "Blog", latestTitle: "Foydali maqolalar", allPosts: "Barcha maqolalar", dateLocale: "uz-UZ",
+  },
   hero: {
     badge: "Lingua Translation",
     title: "Hujjatlarni notarial tasdiq va apostil bilan professional tarjima qilish",
@@ -433,6 +458,16 @@ const en: TranslationSchema = {
     home: "Home", services: "Services", prices: "Prices", languages: "Languages",
     process: "How We Work", benefits: "Why Choose Us", blog: "Blog", contacts: "Contacts",
     apply: "Submit Request", telegram: "Telegram",
+  },
+  blog: {
+    badge: "Blog", title: "Useful articles about translation",
+    subtitle: "Tips, guides and answers to common questions about document translation",
+    empty: "Articles are coming soon.",
+    back: "Back to the blog", faq: "Frequently asked questions",
+    ctaTitle: "Need help with a translation?",
+    ctaText: "Leave a request — we will contact you within a few minutes.",
+    ctaButton: "Submit request",
+    latestBadge: "Blog", latestTitle: "Useful articles", allPosts: "All articles", dateLocale: "en-GB",
   },
   hero: {
     badge: "Lingua Translation",

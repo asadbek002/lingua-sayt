@@ -3,7 +3,7 @@ interface AiResponse {
   error?: string;
 }
 
-async function callAI(prompt: string): Promise<AiResponse> {
+async function callAI(prompt: string, maxTokens = 1500): Promise<AiResponse> {
   // Read env at call time; AI is on whenever a key is present unless AI_ENABLED=false
   const apiKey = process.env.AI_API_KEY || "";
   const enabled = process.env.AI_ENABLED !== "false" && !!apiKey;
@@ -20,7 +20,7 @@ async function callAI(prompt: string): Promise<AiResponse> {
         ? await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-            body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], max_tokens: 1500 }),
+            body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], max_tokens: maxTokens }),
           })
         : await fetch("https://api.anthropic.com/v1/messages", {
             method: "POST",
@@ -29,7 +29,7 @@ async function callAI(prompt: string): Promise<AiResponse> {
               "x-api-key": apiKey,
               "anthropic-version": "2023-06-01",
             },
-            body: JSON.stringify({ model, max_tokens: 1500, messages: [{ role: "user", content: prompt }] }),
+            body: JSON.stringify({ model, max_tokens: maxTokens, messages: [{ role: "user", content: prompt }] }),
           });
 
     const data = await res.json().catch(() => ({}));
@@ -101,11 +101,67 @@ export async function generateReviewResponse(
   return callAI(prompt);
 }
 
-export async function generateBlogPostDraft(title: string): Promise<AiResponse> {
-  const prompt = `Напиши черновик статьи для блога бюро переводов Lingua Translation.
+export const LANGUAGE_NAMES = { ru: "русском", uz: "узбекском (латиница, o'zbek tili)", en: "английском" } as const;
+export type AiLang = keyof typeof LANGUAGE_NAMES;
+
+export async function generateBlogPostDraft(title: string, lang: AiLang = "ru"): Promise<AiResponse> {
+  const prompt = `Напиши черновик статьи для блога бюро переводов Lingua Translation (Наманган и Ташкент, Узбекистан).
 Заголовок: "${title}"
-Требования: 400-600 слов, полезно для читателя, структурировано. Без фейков и мусора.`;
-  return callAI(prompt);
+Язык статьи: ${LANGUAGE_NAMES[lang]}.
+Требования: 400-600 слов, полезно для читателя, структурировано (абзацы, при необходимости списки). Без фейков и мусора, без выдуманных цен и сроков.
+Выведи только текст статьи, без заголовка и пояснений.`;
+  return callAI(prompt, 3000);
+}
+
+export interface BlogTranslation {
+  title: string;
+  description: string;
+  content: string;
+}
+
+/** Translates a blog post into another site language. Returns structured fields, never throws. */
+export async function translateBlogPost(
+  input: { title: string; description?: string; content: string },
+  target: Exclude<AiLang, "ru">
+): Promise<{ translation?: BlogTranslation; error?: string }> {
+  const prompt = `Переведи статью блога бюро переводов Lingua Translation с русского на ${LANGUAGE_NAMES[target]} язык.
+Сохрани смысл, структуру абзацев и списков. Названия компании, имена и номера не меняй. Ничего не добавляй от себя.
+Ответь ТОЛЬКО валидным JSON без пояснений и без markdown-обёртки, формат:
+{"title": "...", "description": "...", "content": "..."}
+
+ИСХОДНАЯ СТАТЬЯ
+title: ${JSON.stringify(input.title)}
+description: ${JSON.stringify(input.description ?? "")}
+content: ${JSON.stringify(input.content)}`;
+
+  const res = await callAI(prompt, 6000);
+  if (res.error) return { error: res.error };
+
+  const parsed = parseJsonObject(res.content);
+  if (!parsed || typeof parsed.title !== "string" || typeof parsed.content !== "string") {
+    return { error: "ИИ вернул ответ в неожиданном формате. Попробуйте ещё раз." };
+  }
+  return {
+    translation: {
+      title: parsed.title.trim(),
+      description: typeof parsed.description === "string" ? parsed.description.trim() : "",
+      content: parsed.content.trim(),
+    },
+  };
+}
+
+/** Extracts the first JSON object from a model answer (tolerates ```json fences and extra prose). */
+export function parseJsonObject(text: string): Record<string, unknown> | null {
+  const cleaned = text.replace(/```(?:json)?/gi, "").trim();
+  const start = cleaned.indexOf("{");
+  const end = cleaned.lastIndexOf("}");
+  if (start === -1 || end <= start) return null;
+  try {
+    const value = JSON.parse(cleaned.slice(start, end + 1));
+    return value && typeof value === "object" && !Array.isArray(value) ? value : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function generateWeeklyContentPlan(): Promise<AiResponse> {

@@ -7,6 +7,8 @@ import {
   generateFaq,
   generateGoogleBusinessPost,
   generateBlogPostDraft,
+  translateBlogPost,
+  type AiLang,
 } from "@/lib/services/aiContentService";
 
 export async function GET(req: NextRequest) {
@@ -27,7 +29,7 @@ export async function POST(req: NextRequest) {
   if (denied) return denied;
 
   const body = await req.json();
-  const { action, service, city, topic } = body;
+  const { action, service, city, topic, lang } = body;
 
   try {
     if (action === "generate-title") {
@@ -46,8 +48,17 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === "generate-blog-draft") {
-      const result = await generateBlogPostDraft(topic || service);
+      const language: AiLang = lang === "uz" || lang === "en" ? lang : "ru";
+      const result = await generateBlogPostDraft(topic || service, language);
       return NextResponse.json(result);
+    }
+
+    if (action === "translate-blog") {
+      const { title, description, content } = body;
+      if (!title || !content || (lang !== "uz" && lang !== "en")) {
+        return NextResponse.json({ error: "Нужны заголовок, текст и язык (uz или en)" }, { status: 400 });
+      }
+      return NextResponse.json(await translateBlogPost({ title, description, content }, lang));
     }
 
     if (action === "generate-post") {

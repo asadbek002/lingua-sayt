@@ -14,12 +14,13 @@ export function useAdminAuth() {
   const redirected = useRef(false);
 
   useEffect(() => {
-    // Only router navigation in the effect, never setState
-    if (!token && !redirected.current) {
+    // During hydration `token` is still the empty server snapshot, so ask the storage directly:
+    // only a visitor who really has no token is sent to the login page (reloads keep the current page).
+    if (!getAdminToken() && !redirected.current) {
       redirected.current = true;
       router.replace(`/admin?next=${encodeURIComponent(pathname)}`);
     }
-  }, [token, router, pathname]);
+  }, [router, pathname]);
 
   const logout = () => {
     clearAdminToken();
