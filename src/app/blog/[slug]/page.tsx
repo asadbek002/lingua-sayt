@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Calendar, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { articleSchema, faqSchema } from "@/lib/seo/jsonLd";
+import { decodeSlug } from "@/lib/utils/slug";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://linguatranslation.uz";
 
@@ -15,7 +16,8 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-async function getPost(slug: string) {
+async function getPost(rawSlug: string) {
+  const slug = decodeSlug(rawSlug);
   try {
     return await prisma.blogPost.findUnique({
       where: { slug, status: "published" },
@@ -33,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Статья не найдена" };
   }
 
-  const url = `${SITE_URL}/blog/${post.slug}`;
+  const url = `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`;
   return {
     title: `${post.title} | Lingua Translation`,
     description: post.description || "",

@@ -100,7 +100,7 @@ export function articleSchema(post: {
     "@type": "Article",
     headline: post.title,
     description: post.description ?? undefined,
-    mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+    mainEntityOfPage: `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`,
     datePublished: post.publishedAt?.toISOString(),
     dateModified: post.updatedAt.toISOString(),
     author: { "@type": "Organization", name: company.legalName },

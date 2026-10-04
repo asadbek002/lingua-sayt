@@ -57,7 +57,7 @@ export default async function BlogPage() {
                 ? posts.map((post) => (
                     <Link
                       key={post.id}
-                      href={`/blog/${post.slug}`}
+                      href={`/blog/${encodeURIComponent(post.slug)}`}
                       className="group p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-red-100 transition-all"
                     >
                       <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#c41e3a] transition-colors">

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/serverAuth";
+import { slugify } from "@/lib/utils/slug";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -9,7 +10,10 @@ function refreshPublicPages(slug?: string) {
   revalidatePath("/");
   revalidatePath("/blog");
   revalidatePath("/sitemap.xml");
-  if (slug) revalidatePath(`/blog/${slug}`);
+  if (slug) {
+    revalidatePath(`/blog/${slug}`);
+    revalidatePath(`/blog/${encodeURIComponent(slug)}`);
+  }
 }
 
 export async function GET(req: NextRequest) {
@@ -37,7 +41,8 @@ export async function POST(req: NextRequest) {
   if (denied) return denied;
 
   const body = await req.json();
-  const { title, slug, description, content, faq, status } = body;
+  const { title, description, content, faq, status } = body;
+  const slug = slugify(body.slug || title || "");
 
   if (!title || !slug || !content) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -78,7 +83,11 @@ export async function PATCH(req: NextRequest) {
 
   const updateData: Record<string, unknown> = {};
   if (title !== undefined) updateData.title = title;
-  if (slug !== undefined) updateData.slug = slug;
+  if (slug !== undefined) {
+    const clean = slugify(String(slug));
+    if (!clean) return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
+    updateData.slug = clean;
+  }
   if (description !== undefined) updateData.description = description;
   if (content !== undefined) updateData.content = content;
   if (faq !== undefined) updateData.faq = faq;

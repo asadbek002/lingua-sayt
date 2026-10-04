@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Loader2, Plus, Eye, Trash2 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import AdminNav from "@/components/AdminNav";
+import { slugify } from "@/lib/utils/slug";
 
 interface BlogPost {
   id: string;
@@ -76,7 +77,7 @@ export default function AdminBlogPage() {
       const data = await res.json();
       if (data.error) setError(data.error === "AI service is not enabled or configured" ? "AI не настроен: задайте AI_ENABLED=true и AI_API_KEY" : data.error);
       if (data.content) {
-        setForm((f) => ({ ...f, content: data.content, slug: title.toLowerCase().replace(/[^a-z0-9а-яё\s]/gi, "").replace(/\s+/g, "-").slice(0, 60) }));
+        setForm((f) => ({ ...f, content: data.content, slug: slugify(title) }));
       }
     } finally {
       setGenerating(false);
@@ -209,7 +210,14 @@ export default function AdminBlogPage() {
                 <label className="text-sm font-medium text-gray-700 mb-1 block">Заголовок</label>
                 <input
                   value={form.title}
-                  onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      title: e.target.value,
+                      // keep the address in sync with the title until it is edited by hand
+                      slug: !f.slug || f.slug === slugify(f.title) ? slugify(e.target.value) : f.slug,
+                    }))
+                  }
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#c41e3a]"
                 />
               </div>
@@ -220,6 +228,9 @@ export default function AdminBlogPage() {
                   onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#c41e3a]"
                 />
+                <p className="mt-1 text-xs text-gray-400">
+                  Адрес статьи: /blog/{slugify(form.slug) || "…"} (кириллица автоматически переводится в латиницу)
+                </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-1 block">Описание</label>
