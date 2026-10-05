@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Stamp, FileText, GraduationCap, Heart, Stethoscope, BookOpen, ArrowRight } from "lucide-react";
 import { useLocale } from "@/i18n/LocaleContext";
+import { localizedPath } from "@/i18n/routes";
 
 const iconList = [Stamp, FileText, GraduationCap, Heart, Stethoscope, BookOpen];
 
@@ -16,7 +17,7 @@ const slugs = [
 ];
 
 export default function Services() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   return (
     <section id="services" className="py-16 sm:py-20 bg-white">
@@ -35,7 +36,7 @@ export default function Services() {
             return (
               <Link
                 key={service.title}
-                href={slugs[i] ?? "/notarial-tarjima"}
+                href={localizedPath(slugs[i] ?? "/notarial-tarjima", locale)}
                 className="group block p-5 sm:p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-red-100 hover:-translate-y-0.5 transition-all"
               >
                 <div className="flex gap-4 sm:block h-full">

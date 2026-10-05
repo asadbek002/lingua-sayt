@@ -7,9 +7,14 @@ import { company } from "@/data/company";
 import { useLocale } from "@/i18n/LocaleContext";
 import { BrandLogo } from "@/components/Header";
 import { formatPhone } from "@/lib/utils/formatPhone";
+import { localizedPath } from "@/i18n/routes";
+import { serviceLabel } from "@/data/servicePages";
+
+// Extra internal links (cities and languages) so every service page is reachable from every page
+const EXTRA_LINKS = ["tarjima-namangan", "tarjima-tashkent", "ingliz-tiliga-tarjima", "koreys-tiliga-tarjima", "rus-tiliga-tarjima"];
 
 export default function Footer() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const officeLabels = [t.contacts.namangan, t.contacts.tashkent];
 
   return (
@@ -18,7 +23,7 @@ export default function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="inline-block mb-5" aria-label="Lingua Translation">
+            <Link href={localizedPath("/", locale)} className="inline-block mb-5" aria-label="Lingua Translation">
               <BrandLogo dark />
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
@@ -52,10 +57,13 @@ export default function Footer() {
               {t.footer.servicesHeading}
             </h3>
             <ul className="space-y-2.5">
-              {t.footer.serviceLinks.map((link) => (
+              {[
+                ...t.footer.serviceLinks.map((link) => ({ label: link.label, href: link.href })),
+                ...EXTRA_LINKS.map((slug) => ({ label: serviceLabel(slug, locale), href: `/${slug}` })),
+              ].map((link) => (
                 <li key={link.href}>
                   <Link
-                    href={link.href}
+                    href={localizedPath(link.href, locale)}
                     className="text-sm text-gray-400 hover:text-white transition-colors"
                   >
                     {link.label}
@@ -123,7 +131,7 @@ export default function Footer() {
 
             <div className="mt-6">
               <Link
-                href="/#application"
+                href={`${localizedPath("/", locale)}#application`}
                 className="flex items-center justify-center h-11 px-4 bg-[#c41e3a] text-white text-sm font-semibold rounded-lg hover:bg-[#a01830] transition-colors"
               >
                 {t.footer.apply}

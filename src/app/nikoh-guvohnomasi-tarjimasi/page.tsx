@@ -1,63 +1,9 @@
 import type { Metadata } from "next";
 import ServicePage from "@/components/ServicePage";
+import { serviceMetadata } from "@/lib/seo/localizedMetadata";
 
-export const metadata: Metadata = {
-  title: "Никох гувоҳномаси таржимаси — Lingua Translation",
-  description:
-    "Никох гувоҳномаси ва ажрим гувоҳномасини нотариал таржима қилиш. Наманган ва Тошкентда тезкор хизмат.",
-};
+export const metadata: Metadata = serviceMetadata("nikoh-guvohnomasi-tarjimasi", "ru");
 
-const CONTENT_SECTIONS = [
-  {
-    heading: "Перевод свидетельства о браке",
-    paragraphs: [
-      "Перевод свидетельства о браке требуется при оформлении визы для супруга-иностранца, регистрации брака за рубежом, оформлении вида на жительство по семейным основаниям или подаче документов в иностранные государственные органы.",
-      "Мы выполняем точный перевод с сохранением всех дат, имён супругов и данных о месте регистрации брака, с последующим нотариальным заверением документа.",
-    ],
-  },
-  {
-    heading: "Сроки оформления",
-    paragraphs: [
-      "Обычный срок перевода — 2–4 рабочих дня. При наличии срочной необходимости уточните у менеджера возможность ускоренного оформления.",
-    ],
-  },
-];
-
-const RELATED = [
-  { label: "Перевод метрики", href: "/metrka-tarjimasi" },
-  { label: "Нотариальный перевод", href: "/notarial-tarjima" },
-  { label: "Апостиль", href: "/apostil" },
-];
-
-const FAQS = [
-  { question: "Никох гувоҳномасини қаерда таржима қилиш мумкин?", answer: "Наманган ва Тошкентдаги офисларимизда, шунингдек онлайн орқали ҳам мурожаат қилишингиз мумкин." },
-  { question: "Таржима қанча вақт олади?", answer: "Одатда 2–4 иш куни ичида." },
-  { question: "Нотариал таржима нима учун керак?", answer: "Виза, чет элда расмий хужжат топшириш, никоҳни рўйхатдан ўтказиш ва бошқа расмий мақсадлар учун керак." },
-  { question: "Онлайн жўнатиш мумкинми?", answer: "Ҳа, сайт орқали ёки Telegram орқали ҳужжат расмини юборишингиз мумкин." },
-];
-
-export default function NikohGuvohnomasiTarjimasiPage() {
-  return (
-    <ServicePage
-      title="Никох гувоҳномаси таржимаси — Lingua Translation"
-      h1="Никох гувоҳномаси нотариал таржимаси"
-      description="Никох гувоҳномаси, ажрим гувоҳномаси ва бошқа оилавий ҳужжатларни нотариал таржима қилиш."
-      benefits={[
-        "Никох гувоҳномаси таржимаси",
-        "Туrmush qurmaganlik guvohnomasi tarjimasi",
-        "Нотариал тасдиқлаш",
-        "2–4 иш куни ичида",
-        "Онлайн мурожаат имкони",
-        "Рус, ўзбек ва корейс тилида қўллаб-қувватлаш",
-      ]}
-      contentSections={CONTENT_SECTIONS}
-      faqs={FAQS}
-      relatedServices={RELATED}
-      serviceName="Перевод свидетельства о браке"
-      breadcrumbs={[
-        { name: "Главная", url: "/" },
-        { name: "Никох гувоҳномаси", url: "/nikoh-guvohnomasi-tarjimasi" },
-      ]}
-    />
-  );
+export default function Page() {
+  return <ServicePage slug="nikoh-guvohnomasi-tarjimasi" lang="ru" />;
 }

@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Send, ChevronDown, Check } from "lucide-react";
 import { company } from "@/data/company";
 import { useLocale } from "@/i18n/LocaleContext";
 import { locales, localeLabels, localeLongLabels, type Locale } from "@/i18n/config";
+import { isLocalizedPage, localizedPath, splitLocalePath } from "@/i18n/routes";
 
 export function BrandLogo({ dark = false, compact = false }: { dark?: boolean; compact?: boolean }) {
   return (
@@ -33,6 +34,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { t, locale, setLocale } = useLocale();
   const pathname = usePathname();
+  const router = useRouter();
   const langRef = useRef<HTMLDivElement>(null);
 
   // Close the language menu on any click outside it or on Escape.
@@ -51,7 +53,9 @@ export default function Header() {
   }, [langOpen]);
 
   // Section anchors live on the home page; from any other page link back to them.
-  const anchor = (id: string) => (pathname === "/" ? `#${id}` : `/#${id}`);
+  const { path } = splitLocalePath(pathname);
+  const home = localizedPath("/", locale);
+  const anchor = (id: string) => (path === "/" ? `#${id}` : `${home}#${id}`);
 
   const navLinks = [
     { label: t.nav.services, href: anchor("services") },
@@ -80,6 +84,8 @@ export default function Header() {
   const handleLocale = (l: Locale) => {
     setLocale(l);
     setLangOpen(false);
+    // Home and service pages have a URL per language; everything else switches in place.
+    if (isLocalizedPage(path) && l !== locale) router.push(localizedPath(path, l));
   };
 
   const LangSwitch = (
@@ -123,7 +129,7 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-6 h-16 lg:h-20">
-          <Link href="/" className="flex-shrink-0" aria-label="Lingua Translation" onClick={() => setMenuOpen(false)}>
+          <Link href={home} className="flex-shrink-0" aria-label="Lingua Translation" onClick={() => setMenuOpen(false)}>
             <BrandLogo />
           </Link>
 
@@ -174,7 +180,7 @@ export default function Header() {
       {menuOpen && (
         <div className="xl:hidden absolute inset-x-0 top-full h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-5rem)] bg-white border-t border-gray-100 overflow-y-auto overscroll-contain">
           <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4" aria-label="Mobile">
-            {[{ label: t.nav.home, href: pathname === "/" ? "#hero" : "/" }, ...navLinks].map((link) => (
+            {[{ label: t.nav.home, href: path === "/" ? "#hero" : home }, ...navLinks].map((link) => (
               <a
                 key={link.href}
                 href={link.href}

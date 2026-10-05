@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
+import { serviceSlugs } from "@/data/serviceSlugs";
+import { localizedPath, pageAlternates } from "@/i18n/routes";
+import { locales } from "@/i18n/config";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://linguatranslation.uz";
 
@@ -9,19 +12,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   const staticPages = [
-    { url: `${SITE_URL}/`, priority: 1.0 },
-    { url: `${SITE_URL}/notarial-tarjima`, priority: 0.9 },
-    { url: `${SITE_URL}/apostil`, priority: 0.9 },
-    { url: `${SITE_URL}/diplom-tarjimasi`, priority: 0.9 },
-    { url: `${SITE_URL}/metrka-tarjimasi`, priority: 0.8 },
-    { url: `${SITE_URL}/nikoh-guvohnomasi-tarjimasi`, priority: 0.8 },
-    { url: `${SITE_URL}/tibbiy-hujjatlar-tarjimasi`, priority: 0.8 },
-    { url: `${SITE_URL}/tarjima-namangan`, priority: 0.9 },
-    { url: `${SITE_URL}/tarjima-tashkent`, priority: 0.9 },
-    { url: `${SITE_URL}/ingliz-tiliga-tarjima`, priority: 0.8 },
-    { url: `${SITE_URL}/koreys-tiliga-tarjima`, priority: 0.8 },
-    { url: `${SITE_URL}/rus-tiliga-tarjima`, priority: 0.8 },
-    { url: `${SITE_URL}/blog`, priority: 0.7 },
+    { path: "/", priority: 1.0 },
+    ...serviceSlugs.map((slug) => ({ path: `/${slug}`, priority: 0.9 })),
+    { path: "/blog", priority: 0.7, localized: false },
   ];
 
   let posts: { slug: string; updatedAt: Date }[] = [];
@@ -35,12 +28,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   return [
-    ...staticPages.map((page) => ({
-      url: page.url,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: page.priority,
-    })),
+    // home + service pages exist in every language, each entry lists its hreflang alternates
+    ...staticPages.flatMap((page) =>
+      "localized" in page && page.localized === false
+        ? [{ url: `${SITE_URL}${page.path}`, lastModified: now, changeFrequency: "weekly" as const, priority: page.priority }]
+        : locales.map((locale) => ({
+            url: `${SITE_URL}${localizedPath(page.path, locale)}`,
+            lastModified: now,
+            changeFrequency: "weekly" as const,
+            priority: locale === "ru" ? page.priority : Math.max(page.priority - 0.1, 0.5),
+            alternates: { languages: pageAlternates(page.path, locale).languages },
+          }))
+    ),
     ...posts.map((post) => ({
       url: `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`,
       lastModified: post.updatedAt,

@@ -44,7 +44,7 @@ export function localBusinessSchema(office: { city: string; phone: string; mapUr
   };
 }
 
-export function serviceSchema(name: string, description: string) {
+export function serviceSchema(name: string, description: string, lang: "ru" | "uz" | "en" = "ru") {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -57,6 +57,7 @@ export function serviceSchema(name: string, description: string) {
     },
     areaServed: { "@type": "Country", name: "Uzbekistan" },
     serviceType: "Translation Service",
+    inLanguage: lang,
   };
 }
 
