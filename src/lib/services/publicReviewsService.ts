@@ -24,8 +24,8 @@ interface GoogleReview {
 }
 
 const STARS: Record<string, number> = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
-const MIN_TEXT_LENGTH = 30;
-const MAX_REVIEWS = 6;
+const MIN_TEXT_LENGTH = 10;
+const MAX_REVIEWS = 120;
 
 /** Google machine-translates reviews: "(Translated by Google) … (Original) …". Keep the author's original text. */
 export function cleanReviewText(raw: string): string {
@@ -35,7 +35,7 @@ export function cleanReviewText(raw: string): string {
   return text.replace(/^\(Translated by Google\)\s*/i, "").trim();
 }
 
-/** Picks the reviews worth showing: good rating, real text, best and newest first. */
+/** Picks the reviews worth showing: good rating, real text, newest first. */
 export function pickBestReviews(
   items: { review: GoogleReview; office: PublicReview["office"] }[],
   minRating = 4,
@@ -56,7 +56,7 @@ export function pickBestReviews(
       };
     })
     .filter((r): r is PublicReview => r !== null)
-    .sort((a, b) => b.rating - a.rating || b.date.localeCompare(a.date))
+    .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, limit);
 }
 

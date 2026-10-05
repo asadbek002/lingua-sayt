@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Star } from "lucide-react";
 import { useLocale } from "@/i18n/LocaleContext";
 import type { PublicReviews } from "@/lib/services/publicReviewsService";
@@ -14,6 +15,8 @@ const TEXT = {
     office: { namangan: "Наманган", tashkent: "Ташкент" },
     leave: "Оставить отзыв",
     source: "Отзывы с Google Maps",
+    showMore: "Показать ещё",
+    all: "Все",
   },
   uz: {
     badge: "Mijozlar fikrlari",
@@ -24,6 +27,8 @@ const TEXT = {
     office: { namangan: "Namangan", tashkent: "Toshkent" },
     leave: "Sharh qoldirish",
     source: "Google Maps sharhlari",
+    showMore: "Yana ko'rsatish",
+    all: "Hammasi",
   },
   en: {
     badge: "Client reviews",
@@ -34,8 +39,12 @@ const TEXT = {
     office: { namangan: "Namangan", tashkent: "Tashkent" },
     leave: "Leave a review",
     source: "Reviews from Google Maps",
+    showMore: "Show more",
+    all: "All",
   },
 } as const;
+
+const PAGE_SIZE = 6;
 
 const DATE_LOCALE = { ru: "ru-RU", uz: "uz-UZ", en: "en-GB" } as const;
 
@@ -58,6 +67,11 @@ export default function ReviewsSection({ data }: { data: PublicReviews }) {
   const { locale } = useLocale();
   const t = TEXT[locale] ?? TEXT.ru;
   const links = (["namangan", "tashkent"] as const).filter((o) => REVIEW_LINKS[o]);
+  const [filter, setFilter] = useState<"all" | "namangan" | "tashkent">("all");
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  const offices = (["namangan", "tashkent"] as const).filter((o) => data.reviews.some((r) => r.office === o));
+  const filtered = filter === "all" ? data.reviews : data.reviews.filter((r) => r.office === filter);
+  const shown = filtered.slice(0, visible);
 
   return (
     <section id="reviews" className="py-16 sm:py-20 bg-white">
@@ -77,8 +91,30 @@ export default function ReviewsSection({ data }: { data: PublicReviews }) {
           )}
         </div>
 
+        {offices.length > 1 && (
+          <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
+            {(["all", ...offices] as const).map((o) => (
+              <button
+                key={o}
+                type="button"
+                onClick={() => {
+                  setFilter(o);
+                  setVisible(PAGE_SIZE);
+                }}
+                className={`px-4 py-2 text-sm font-medium rounded-full border transition-colors ${
+                  filter === o
+                    ? "bg-[#c41e3a] text-white border-[#c41e3a]"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-[#c41e3a]"
+                }`}
+              >
+                {o === "all" ? t.all : t.office[o]}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.reviews.map((r) => (
+          {shown.map((r) => (
             <figure key={r.id} className="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col">
               <Stars value={r.rating} />
               <blockquote className="mt-3 text-sm text-gray-700 leading-relaxed flex-1 whitespace-pre-line">
@@ -98,6 +134,18 @@ export default function ReviewsSection({ data }: { data: PublicReviews }) {
             </figure>
           ))}
         </div>
+
+        {filtered.length > shown.length && (
+          <div className="mt-8 text-center">
+            <button
+              type="button"
+              onClick={() => setVisible((v) => v + PAGE_SIZE * 2)}
+              className="px-6 py-3 text-sm font-semibold text-white bg-[#c41e3a] rounded-xl hover:bg-[#a51830] transition-colors"
+            >
+              {t.showMore} (+{Math.min(PAGE_SIZE * 2, filtered.length - shown.length)})
+            </button>
+          </div>
+        )}
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           {links.map((o) => (

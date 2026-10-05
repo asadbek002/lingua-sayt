@@ -270,17 +270,30 @@ export async function getReviews(locationId: string) {
   }
 
   try {
-    const res = await fetch(
-      `${GBP_API}/accounts/${accountIdFor(locationId)}/locations/${locationId}/reviews`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    if (!res.ok) return { reviews: [], error: await googleError(res, "Google API") };
-    const data = await res.json();
-    return {
-      reviews: data.reviews || [],
-      averageRating: typeof data.averageRating === "number" ? data.averageRating : undefined,
-      totalReviewCount: typeof data.totalReviewCount === "number" ? data.totalReviewCount : undefined,
-    };
+    const base = `${GBP_API}/accounts/${accountIdFor(locationId)}/locations/${locationId}/reviews`;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const reviews: any[] = [];
+    let averageRating: number | undefined;
+    let totalReviewCount: number | undefined;
+    let pageToken = "";
+    for (let page = 0; page < 20; page++) {
+      const qs = `pageSize=50&orderBy=${encodeURIComponent("updateTime desc")}${
+        pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ""
+      }`;
+      const res = await fetch(`${base}?${qs}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) {
+        // first page failing is an error; later pages just end the list
+        if (page === 0) return { reviews: [], error: await googleError(res, "Google API") };
+        break;
+      }
+      const data = await res.json();
+      reviews.push(...(data.reviews || []));
+      if (typeof data.averageRating === "number") averageRating = data.averageRating;
+      if (typeof data.totalReviewCount === "number") totalReviewCount = data.totalReviewCount;
+      pageToken = data.nextPageToken || "";
+      if (!pageToken) break;
+    }
+    return { reviews, averageRating, totalReviewCount };
   } catch (err) {
     console.error("[GoogleBusinessService] getReviews error:", err);
     return { reviews: [], error: "Failed to fetch reviews" };
