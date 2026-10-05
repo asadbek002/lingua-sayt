@@ -17,6 +17,10 @@ const STORAGE_KEY = "lingua-chat-session";
 const PHONE_KEY = "lingua-chat-phone";
 const OPEN_POLL_MS = 4000;
 const CLOSED_POLL_MS = 20000;
+const TEASER_KEY = "lingua-chat-teaser-seen";
+const REVEAL_AFTER_MS = 25000;
+const REVEAL_SCROLL = 0.4;
+const TEASER_MS = 9000;
 
 const TEXT = {
   ru: {
@@ -26,6 +30,7 @@ const TEXT = {
     phone: "Телефон (чтобы мы могли перезвонить)",
     send: "Отправить",
     error: "Не удалось отправить. Попробуйте ещё раз или позвоните нам.",
+    teaser: "Есть вопрос? Напишите нам — ответим в течение 15 минут",
     open: "Открыть чат",
     close: "Закрыть чат",
   },
@@ -36,6 +41,7 @@ const TEXT = {
     phone: "Telefon (qo'ng'iroq qilishimiz uchun)",
     send: "Yuborish",
     error: "Yuborib bo'lmadi. Qayta urinib ko'ring yoki qo'ng'iroq qiling.",
+    teaser: "Savolingiz bormi? Yozing — 15 daqiqada javob beramiz",
     open: "Chatni ochish",
     close: "Chatni yopish",
   },
@@ -46,6 +52,7 @@ const TEXT = {
     phone: "Phone (so we can call you back)",
     send: "Send",
     error: "Could not send. Please try again or call us.",
+    teaser: "Have a question? Write to us — we reply within 15 minutes",
     open: "Open chat",
     close: "Close chat",
   },
@@ -85,6 +92,8 @@ export default function ChatWidget() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const [teaser, setTeaser] = useState(false);
 
   const lastIdRef = useRef(0);
   const openRef = useRef(false);
@@ -95,6 +104,34 @@ export default function ChatWidget() {
   useEffect(() => {
     openRef.current = open;
   }, [open]);
+
+  // The button stays hidden until the visitor has had time to look around (time on page or scroll depth),
+  // so it appears as a helpful offer rather than as page chrome. Returning chat users see it at once.
+  useEffect(() => {
+    if (pathname.startsWith("/admin")) return;
+    if (readStorage(STORAGE_KEY)) {
+      const id = setTimeout(() => setRevealed(true), 0);
+      return () => clearTimeout(id);
+    }
+    const reveal = () => {
+      setRevealed(true);
+      if (!readStorage(TEASER_KEY)) {
+        writeStorage(TEASER_KEY, "1");
+        setTeaser(true);
+        setTimeout(() => setTeaser(false), TEASER_MS);
+      }
+    };
+    const timer = setTimeout(reveal, REVEAL_AFTER_MS);
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (max > 0 && window.scrollY / max >= REVEAL_SCROLL) reveal();
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [pathname]);
 
   // Hide the widget entirely while the CRM bridge is not configured (the API answers 503)
   useEffect(() => {
@@ -150,11 +187,13 @@ export default function ChatWidget() {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
   }, [messages, open]);
 
-  if (pathname.startsWith("/admin") || unavailable) return null;
+  const visible = revealed || open || unread > 0;
+  if (pathname.startsWith("/admin") || unavailable || !visible) return null;
 
   const toggle = () => {
     const next = !open;
     setOpen(next);
+    setTeaser(false);
     if (next) {
       trackEvent("open_chat");
       setUnread(0);
@@ -261,12 +300,23 @@ export default function ChatWidget() {
         </div>
       )}
 
+      {teaser && !open && (
+        <button
+          type="button"
+          onClick={toggle}
+          className="mb-3 ml-auto block max-w-[15rem] text-left text-sm bg-white text-gray-700 border border-gray-100 rounded-2xl rounded-br-sm shadow-xl px-4 py-3 animate-[fadeIn_.3s_ease-out]"
+        >
+          {t.teaser}
+        </button>
+      )}
+
       <button
         onClick={toggle}
         aria-label={open ? t.close : t.open}
-        className="relative ml-auto flex w-14 h-14 items-center justify-center rounded-full bg-[#c41e3a] text-white shadow-lg hover:bg-[#a01830] transition-colors"
+        className="relative ml-auto flex w-16 h-16 items-center justify-center rounded-full bg-[#c41e3a] text-white shadow-lg hover:bg-[#a01830] transition-colors"
       >
-        {open ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
+        {teaser && !open && <span className="absolute inset-0 rounded-full bg-[#c41e3a] opacity-40 animate-ping" aria-hidden />}
+        {open ? <X className="w-7 h-7" /> : <MessageCircle className="w-7 h-7" />}
         {!open && unread > 0 && (
           <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-yellow-400 text-[#1a1a2e] text-xs font-bold flex items-center justify-center">
             {unread}
