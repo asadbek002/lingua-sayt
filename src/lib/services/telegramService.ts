@@ -2,19 +2,32 @@ import type { Application } from "@prisma/client";
 import { formatTelegramMessage } from "@/lib/utils/formatApplicationMessage";
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+// Each entry is a chat id, or "chatId:topicId" to post into one topic of a forum group
+// (e.g. TELEGRAM_ADMIN_CHAT_IDS=123456789,-1002323448021:4118).
 const ADMIN_CHAT_IDS = (process.env.TELEGRAM_ADMIN_CHAT_IDS || "")
   .split(",")
   .map((id) => id.trim())
   .filter(Boolean);
 
+function parseTarget(target: string): { chatId: string; threadId?: string } {
+  const [chatId, threadId] = target.split(":");
+  return { chatId, threadId: threadId || undefined };
+}
+
 const TG_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
-async function sendMessage(chatId: string, text: string): Promise<boolean> {
+async function sendMessage(target: string, text: string): Promise<boolean> {
+  const { chatId, threadId } = parseTarget(target);
   try {
     const res = await fetch(`${TG_API}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: "HTML",
+        ...(threadId ? { message_thread_id: Number(threadId) } : {}),
+      }),
     });
     const data = await res.json();
     return data.ok === true;
@@ -24,10 +37,12 @@ async function sendMessage(chatId: string, text: string): Promise<boolean> {
   }
 }
 
-async function sendDocument(chatId: string, fileBuffer: Buffer, filename: string): Promise<boolean> {
+async function sendDocument(target: string, fileBuffer: Buffer, filename: string): Promise<boolean> {
+  const { chatId, threadId } = parseTarget(target);
   try {
     const formData = new FormData();
     formData.append("chat_id", chatId);
+    if (threadId) formData.append("message_thread_id", threadId);
     const uint8 = new Uint8Array(fileBuffer);
     const blob = new Blob([uint8]);
     formData.append("document", blob, filename);
