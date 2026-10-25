@@ -21,7 +21,7 @@ export function organizationSchema() {
   };
 }
 
-export function localBusinessSchema(office: { city: string; street?: string; phone: string; mapUrl: string }) {
+export function localBusinessSchema(office: { city: string; street?: string; geo?: { latitude: number; longitude: number }; phone: string; mapUrl: string }) {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -37,6 +37,7 @@ export function localBusinessSchema(office: { city: string; street?: string; pho
       addressLocality: office.city,
       addressCountry: "UZ",
     },
+    ...(office.geo ? { geo: { "@type": "GeoCoordinates", ...office.geo } } : {}),
     hasMap: office.mapUrl,
     priceRange: "$$",
     currenciesAccepted: "UZS",
