@@ -21,7 +21,7 @@ export function organizationSchema() {
   };
 }
 
-export function localBusinessSchema(office: { city: string; phone: string; mapUrl: string }) {
+export function localBusinessSchema(office: { city: string; street?: string; phone: string; mapUrl: string }) {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -33,10 +33,10 @@ export function localBusinessSchema(office: { city: string; phone: string; mapUr
     openingHours: "Mo-Sa 09:00-19:00",
     address: {
       "@type": "PostalAddress",
+      ...(office.street ? { streetAddress: office.street } : {}),
       addressLocality: office.city,
       addressCountry: "UZ",
     },
-    geo: { "@type": "GeoCoordinates" },
     hasMap: office.mapUrl,
     priceRange: "$$",
     currenciesAccepted: "UZS",
