@@ -2,10 +2,16 @@ import { company } from "@/data/company";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://linguatranslation.uz";
 
+// One stable @id per entity, so the organization, its offices and its services are linked
+// into a single graph instead of standing as unrelated blocks.
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+const officeId = (city: string) => `${SITE_URL}/#office-${city.toLowerCase()}`;
+
 export function organizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": ORGANIZATION_ID,
     name: company.legalName,
     url: SITE_URL,
     logo: `${SITE_URL}/images/logo.png`,
@@ -15,16 +21,18 @@ export function organizationSchema() {
       telephone: p.phone,
       contactType: "customer service",
       areaServed: "UZ",
-      availableLanguage: ["Russian", "Uzbek", "Korean"],
+      availableLanguage: ["Russian", "Uzbek", "English", "Korean"],
     })),
     sameAs: [company.socialLinks.instagram, company.socialLinks.telegram],
   };
 }
 
-export function localBusinessSchema(office: { city: string; street?: string; geo?: { latitude: number; longitude: number }; phone: string; mapUrl: string }) {
+export function localBusinessSchema(office: { city: string; cityI18n?: { en: string }; street?: string; geo?: { latitude: number; longitude: number }; phone: string; mapUrl: string }) {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    "@id": officeId(office.cityI18n?.en ?? office.city),
+    parentOrganization: { "@id": ORGANIZATION_ID },
     name: `${company.legalName} — ${office.city}`,
     image: `${SITE_URL}/images/logo.png`,
     url: SITE_URL,
@@ -51,11 +59,7 @@ export function serviceSchema(name: string, description: string, lang: "ru" | "u
     "@type": "Service",
     name,
     description,
-    provider: {
-      "@type": "Organization",
-      name: company.legalName,
-      url: SITE_URL,
-    },
+    provider: { "@type": "Organization", "@id": ORGANIZATION_ID, name: company.legalName, url: SITE_URL },
     areaServed: { "@type": "Country", name: "Uzbekistan" },
     serviceType: "Translation Service",
     inLanguage: lang,
@@ -106,6 +110,6 @@ export function articleSchema(post: {
     datePublished: post.publishedAt?.toISOString(),
     dateModified: post.updatedAt.toISOString(),
     author: { "@type": "Organization", name: company.legalName },
-    publisher: { "@type": "Organization", name: company.legalName, url: SITE_URL },
+    publisher: { "@type": "Organization", "@id": ORGANIZATION_ID, name: company.legalName, url: SITE_URL },
   };
 }
