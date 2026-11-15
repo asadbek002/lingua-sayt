@@ -2,6 +2,9 @@
 export const serviceSlugs = [
   "notarial-tarjima",
   "apostil",
+  "apostil-namangan",
+  "apostil-tashkent",
+  "apostil-diplom",
   "diplom-tarjimasi",
   "metrka-tarjimasi",
   "nikoh-guvohnomasi-tarjimasi",

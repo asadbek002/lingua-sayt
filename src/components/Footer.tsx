@@ -11,7 +11,7 @@ import { localizedPath } from "@/i18n/routes";
 import { serviceLabel } from "@/data/servicePages";
 
 // Extra internal links (cities and languages) so every service page is reachable from every page
-const EXTRA_LINKS = ["tarjima-namangan", "tarjima-tashkent", "ingliz-tiliga-tarjima", "koreys-tiliga-tarjima", "rus-tiliga-tarjima"];
+const EXTRA_LINKS = ["apostil-namangan", "apostil-tashkent", "apostil-diplom", "tarjima-namangan", "tarjima-tashkent", "ingliz-tiliga-tarjima", "koreys-tiliga-tarjima", "rus-tiliga-tarjima"];
 
 export default function Footer() {
   const { t, locale } = useLocale();

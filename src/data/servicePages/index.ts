@@ -1,6 +1,9 @@
 import type { Locale } from "@/i18n/config";
 import type { ServiceDef } from "./types";
 import { apostil } from "./apostil";
+import { apostilNamangan } from "./apostil-namangan";
+import { apostilTashkent } from "./apostil-tashkent";
+import { apostilDiplom } from "./apostil-diplom";
 import { notarialTarjima } from "./notarial-tarjima";
 import { diplomTarjimasi } from "./diplom-tarjimasi";
 import { metrkaTarjimasi } from "./metrka-tarjimasi";
@@ -17,6 +20,9 @@ export type { ServiceCopy, ServiceDef } from "./types";
 export const serviceDefs: ServiceDef[] = [
   notarialTarjima,
   apostil,
+  apostilNamangan,
+  apostilTashkent,
+  apostilDiplom,
   diplomTarjimasi,
   metrkaTarjimasi,
   nikohGuvohnomasiTarjimasi,

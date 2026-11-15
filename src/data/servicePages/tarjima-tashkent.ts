@@ -2,7 +2,7 @@ import type { ServiceDef } from "./types";
 
 export const tarjimaTashkent: ServiceDef = {
   slug: "tarjima-tashkent",
-  related: ["notarial-tarjima", "apostil", "diplom-tarjimasi", "tarjima-namangan"],
+  related: ["apostil-tashkent", "notarial-tarjima", "apostil", "diplom-tarjimasi", "tarjima-namangan"],
   copy: {
     ru: {
       label: "Переводы в Ташкенте",
