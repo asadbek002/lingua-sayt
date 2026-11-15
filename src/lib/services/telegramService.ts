@@ -30,6 +30,8 @@ async function sendMessage(target: string, text: string): Promise<boolean> {
       }),
     });
     const data = await res.json();
+    // Telegram explains refusals ("chat not found", "message thread not found", ...): keep that in the logs
+    if (data.ok !== true) console.error(`[TelegramService] sendMessage to ${target} refused: ${data.description ?? res.status}`);
     return data.ok === true;
   } catch (err) {
     console.error("[TelegramService] sendMessage error:", err);
@@ -52,6 +54,7 @@ async function sendDocument(target: string, fileBuffer: Buffer, filename: string
       body: formData,
     });
     const data = await res.json();
+    if (data.ok !== true) console.error(`[TelegramService] sendDocument to ${target} refused: ${data.description ?? res.status}`);
     return data.ok === true;
   } catch (err) {
     console.error("[TelegramService] sendDocument error:", err);
