@@ -6,16 +6,16 @@ export const apostilTashkent: ServiceDef = {
   copy: {
     ru: {
       label: "Апостиль в Ташкенте",
-      metaTitle: "Апостиль в Ташкенте: диплом, аттестат, документы — 3–5 дней",
+      metaTitle: "Апостиль в Ташкенте: диплом, аттестат, документы",
       metaDescription:
-        "Апостиль на диплом, аттестат, свидетельства и другие документы в Ташкенте. Подача онлайн или в офисе, срок 3–5 дней, от 220 000 сум. Lingua Translation.",
+        "Апостиль на диплом, аттестат, свидетельства и другие документы в Ташкенте. Подача онлайн или в офисе, срок 3–5 рабочих дней, от 220 000 сум. Lingua Translation.",
       h1: "Апостиль в Ташкенте",
       intro:
         "Помогаем получить апостиль на дипломы, аттестаты, свидетельства ЗАГС и другие официальные документы для использования за границей. Приём в нашем офисе в Ташкенте или онлайн.",
       serviceName: "Апостиль документов в Ташкенте",
       benefits: [
-        "Срок оформления — 3–5 дней",
-        "Стоимость от 220 000 до 270 000 сум",
+        "Срок оформления",
+        "Стоимость от 220 000 до 270 000 сум, государственный сбор включён",
         "Нужны только паспорт и сам документ",
         "Приём онлайн: пришлите фото документа",
         "Офис в Ташкенте: Bog'ishamol ko'chasi, 21-B",
@@ -33,7 +33,7 @@ export const apostilTashkent: ServiceDef = {
           heading: "Как это работает",
           paragraphs: [
             "Вы приходите в наш офис в Ташкенте или присылаете фото паспорта и документа через сайт или Telegram. Для оформления нужны только паспорт и сам документ. Менеджер называет точную цену и срок, мы подаём документ в уполномоченный орган и возвращаем вам готовый документ.",
-            "Стоимость в нашем бюро — от 220 000 до 270 000 сум, срок — 3–5 дней. Для зарубежной подачи тут же делаем нотариальный перевод документа с апостилем.",
+            "Стоимость в нашем бюро — от 220 000 до 270 000 сум (государственный сбор включён), срок — 3–5 рабочих дней. Для зарубежной подачи тут же делаем нотариальный перевод документа с апостилем.",
           ],
         },
         {
@@ -45,8 +45,8 @@ export const apostilTashkent: ServiceDef = {
         },
       ],
       faqs: [
-        { question: "Сколько стоит апостиль в Ташкенте?", answer: "В нашем бюро от 220 000 до 270 000 сум в зависимости от документа. Точную стоимость называет менеджер после просмотра документа." },
-        { question: "Сколько времени занимает оформление?", answer: "3–5 дней в нашем бюро. Государственный орган обычно рассматривает заявление 2 рабочих дня, при дополнительной проверке — до 10 рабочих дней." },
+        { question: "Сколько стоит апостиль в Ташкенте?", answer: "В нашем бюро от 220 000 до 270 000 сум в зависимости от документа. Государственный сбор уже включён в стоимость. Точную цену называет менеджер после просмотра документа." },
+        { question: "Сколько времени занимает оформление?", answer: "3–5 рабочих дней в нашем бюро. Государственный орган обычно рассматривает заявление 2 рабочих дня, при дополнительной проверке — до 10 рабочих дней." },
         { question: "Что взять с собой в офис в Ташкенте?", answer: "Паспорт и сам документ, на который нужен апостиль." },
         { question: "Где находится ваш офис в Ташкенте?", answer: "Bog'ishamol ko'chasi, 21-B. Работаем с 09:00 до 19:00, с понедельника по субботу." },
         { question: "Можно ли отправить документы онлайн?", answer: "Да. Пришлите фото документа и паспорта через сайт или Telegram, мы подскажем, как передать оригинал, и будем сообщать о ходе оформления." },
@@ -55,16 +55,16 @@ export const apostilTashkent: ServiceDef = {
     },
     uz: {
       label: "Toshkentda apostil",
-      metaTitle: "Toshkentda apostil: diplom, attestat, hujjatlar — 3–5 kun",
+      metaTitle: "Toshkentda apostil: diplom, attestat, hujjatlar",
       metaDescription:
-        "Toshkentda diplom, attestat, guvohnomalar va boshqa hujjatlarga apostil qo'yish. Onlayn yoki ofisda topshirish, muddati 3–5 kun, 220 000 so'mdan. Lingua Translation.",
+        "Toshkentda diplom, attestat, guvohnomalar va boshqa hujjatlarga apostil qo'yish. Onlayn yoki ofisda topshirish, muddati 3–5 ish kuni, 220 000 so'mdan. Lingua Translation.",
       h1: "Toshkentda apostil qo'yish",
       intro:
         "Diplom, attestat, FHDYO guvohnomalari va boshqa rasmiy hujjatlarga chet elda foydalanish uchun apostil olishda yordam beramiz. Toshkentdagi ofisimizda yoki onlayn qabul qilamiz.",
       serviceName: "Toshkentda hujjatlarga apostil qo'yish",
       benefits: [
-        "Rasmiylashtirish muddati — 3–5 kun",
-        "Narxi 220 000 dan 270 000 so'mgacha",
+        "Rasmiylashtirish muddati",
+        "Narxi 220 000 dan 270 000 so'mgacha, davlat yig'imi kiritilgan",
         "Faqat pasport va hujjatning o'zi kerak",
         "Onlayn qabul: hujjat rasmini yuboring",
         "Toshkent ofisi: Bog'ishamol ko'chasi, 21-B",
@@ -82,7 +82,7 @@ export const apostilTashkent: ServiceDef = {
           heading: "Qanday ishlaydi",
           paragraphs: [
             "Toshkentdagi ofisimizga kelasiz yoki pasport va hujjat rasmini sayt yoki Telegram orqali yuborasiz. Rasmiylashtirish uchun faqat pasport va hujjatning o'zi kerak. Menejer aniq narx va muddatni aytadi, hujjatni vakolatli organga topshiramiz va tayyor hujjatni sizga qaytaramiz.",
-            "Byromizda narxi 220 000 dan 270 000 so'mgacha, muddati 3–5 kun. Chet elga topshirish uchun apostilli hujjatning notarial tarjimasini ham shu yerda qilib beramiz.",
+            "Byromizda narxi 220 000 dan 270 000 so'mgacha (davlat yig'imi kiritilgan), muddati 3–5 ish kuni. Chet elga topshirish uchun apostilli hujjatning notarial tarjimasini ham shu yerda qilib beramiz.",
           ],
         },
         {
@@ -94,8 +94,8 @@ export const apostilTashkent: ServiceDef = {
         },
       ],
       faqs: [
-        { question: "Toshkentda apostil qancha turadi?", answer: "Byromizda hujjatga qarab 220 000 dan 270 000 so'mgacha. Aniq narxni menejer hujjatni ko'rgach aytadi." },
-        { question: "Rasmiylashtirish qancha vaqt oladi?", answer: "Byromizda 3–5 kun. Davlat organi odatda arizani 2 ish kunida ko'radi, qo'shimcha tekshiruvda — 10 ish kunigacha." },
+        { question: "Toshkentda apostil qancha turadi?", answer: "Byromizda hujjatga qarab 220 000 dan 270 000 so'mgacha. Davlat yig'imi narxga kiritilgan. Aniq narxni menejer hujjatni ko'rgach aytadi." },
+        { question: "Rasmiylashtirish qancha vaqt oladi?", answer: "Byromizda 3–5 ish kuni. Davlat organi odatda arizani 2 ish kunida ko'radi, qo'shimcha tekshiruvda — 10 ish kunigacha." },
         { question: "Toshkent ofisiga nima olib kelish kerak?", answer: "Pasport va apostil kerak bo'lgan hujjatning o'zi." },
         { question: "Toshkentdagi ofisingiz qayerda?", answer: "Bog'ishamol ko'chasi, 21-B. Dushanbadan shanbagacha 09:00 dan 19:00 gacha ishlaymiz." },
         { question: "Hujjatlarni onlayn yuborish mumkinmi?", answer: "Ha. Hujjat va pasport rasmini sayt yoki Telegram orqali yuboring, asl nusxani qanday topshirishni aytamiz va jarayondan xabardor qilib turamiz." },
@@ -104,16 +104,16 @@ export const apostilTashkent: ServiceDef = {
     },
     en: {
       label: "Apostille in Tashkent",
-      metaTitle: "Apostille in Tashkent: Diplomas, Certificates, Documents — 3–5 Days",
+      metaTitle: "Apostille in Tashkent: Diplomas, Certificates, Documents",
       metaDescription:
-        "Apostille for diplomas, certificates, civil records and other documents in Tashkent. Submit online or at our office, 3–5 days, from 220,000 UZS. Lingua Translation.",
+        "Apostille for diplomas, certificates, civil records and other documents in Tashkent. Submit online or at our office, 3–5 working days, from 220,000 UZS. Lingua Translation.",
       h1: "Apostille in Tashkent",
       intro:
         "We help you obtain apostilles for diplomas, certificates, civil registry records and other official documents for use abroad. Walk in to our Tashkent office or apply online.",
       serviceName: "Apostille for documents in Tashkent",
       benefits: [
-        "Turnaround of 3–5 days",
-        "Price from 220,000 to 270,000 UZS",
+        "Turnaround of 3–5 working days",
+        "Price from 220,000 to 270,000 UZS, state fee included",
         "Only your passport and the document are needed",
         "Online submission: send a photo of the document",
         "Tashkent office: Bog'ishamol ko'chasi, 21-B",
@@ -131,7 +131,7 @@ export const apostilTashkent: ServiceDef = {
           heading: "How it works",
           paragraphs: [
             "You visit our Tashkent office or send photos of your passport and the document through the website or Telegram. Only your passport and the document are needed. A manager confirms the exact price and timing, we submit the document to the competent authority and return the finished document to you.",
-            "At our agency the price is from 220,000 to 270,000 UZS and the timing is 3–5 days. For submission abroad we also make a notarized translation of the apostilled document on the spot.",
+            "At our agency the price is from 220,000 to 270,000 UZS (state fee included) and the timing is 3–5 working days. For submission abroad we also make a notarized translation of the apostilled document on the spot.",
           ],
         },
         {
@@ -143,8 +143,8 @@ export const apostilTashkent: ServiceDef = {
         },
       ],
       faqs: [
-        { question: "How much does an apostille cost in Tashkent?", answer: "At our agency from 220,000 to 270,000 UZS depending on the document. A manager confirms the exact cost after seeing the document." },
-        { question: "How long does it take?", answer: "3–5 days at our agency. The government body usually reviews the application within 2 working days, or up to 10 working days if extra verification is needed." },
+        { question: "How much does an apostille cost in Tashkent?", answer: "At our agency from 220,000 to 270,000 UZS depending on the document. The state fee is already included. A manager confirms the exact cost after seeing the document." },
+        { question: "How long does it take?", answer: "3–5 working days at our agency. The government body usually reviews the application within 2 working days, or up to 10 working days if extra verification is needed." },
         { question: "What should I bring to the Tashkent office?", answer: "Your passport and the document that needs the apostille." },
         { question: "Where is your Tashkent office?", answer: "Bog'ishamol ko'chasi, 21-B. Open 09:00 to 19:00, Monday to Saturday." },
         { question: "Can I send documents online?", answer: "Yes. Send a photo of the document and your passport through the website or Telegram, we will explain how to hand over the original and keep you updated." },

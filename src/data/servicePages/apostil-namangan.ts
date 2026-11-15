@@ -6,16 +6,16 @@ export const apostilNamangan: ServiceDef = {
   copy: {
     ru: {
       label: "Апостиль в Намангане",
-      metaTitle: "Апостиль в Намангане: диплом, аттестат, документы — 3–5 дней",
+      metaTitle: "Апостиль в Намангане: диплом, аттестат, документы",
       metaDescription:
-        "Апостиль на диплом, аттестат и другие документы в Намангане. Подача онлайн или в офисе, срок 3–5 дней, от 220 000 сум. Lingua Translation.",
+        "Апостиль на диплом, аттестат и другие документы в Намангане. Подача онлайн или в офисе, срок 3–5 рабочих дней, от 220 000 сум. Lingua Translation.",
       h1: "Апостиль в Намангане",
       intro:
         "Оформляем апостиль на дипломы, аттестаты и другие официальные документы для использования за границей. Приём в нашем офисе в Намангане или онлайн по всему Узбекистану.",
       serviceName: "Апостиль документов в Намангане",
       benefits: [
-        "Срок оформления — 3–5 дней",
-        "Стоимость от 220 000 до 270 000 сум",
+        "Срок оформления",
+        "Стоимость от 220 000 до 270 000 сум, государственный сбор включён",
         "Нужны только паспорт и сам документ",
         "Работаем дистанционно: фото документа и сопровождение онлайн",
         "Приём в офисе в Намангане: Boburshoh ko'chasi, 3",
@@ -39,7 +39,7 @@ export const apostilNamangan: ServiceDef = {
         {
           heading: "Сроки и стоимость",
           paragraphs: [
-            "В нашем бюро оформление занимает 3–5 дней, стоимость — от 220 000 до 270 000 сум в зависимости от документа. Точную цену и срок менеджер назовёт после просмотра документа.",
+            "В нашем бюро оформление занимает 3–5 рабочих дней, стоимость — от 220 000 до 270 000 сум в зависимости от документа, государственный сбор уже включён. Точную цену менеджер назовёт после просмотра документа.",
             "Государственный орган, как правило, рассматривает заявление в течение 2 рабочих дней, а если нужна дополнительная проверка подписи, полномочий или печати, срок может быть продлён до 10 рабочих дней.",
           ],
         },
@@ -52,8 +52,8 @@ export const apostilNamangan: ServiceDef = {
         },
       ],
       faqs: [
-        { question: "Сколько стоит апостиль в Намангане?", answer: "В нашем бюро от 220 000 до 270 000 сум в зависимости от документа. Точную стоимость называет менеджер после просмотра документа." },
-        { question: "Сколько времени занимает апостиль?", answer: "3–5 дней в нашем бюро. Государственный орган обычно рассматривает заявление в течение 2 рабочих дней, при дополнительной проверке — до 10 рабочих дней." },
+        { question: "Сколько стоит апостиль в Намангане?", answer: "В нашем бюро от 220 000 до 270 000 сум в зависимости от документа. Государственный сбор уже включён в стоимость. Точную цену называет менеджер после просмотра документа." },
+        { question: "Сколько времени занимает апостиль?", answer: "3–5 рабочих дней в нашем бюро. Государственный орган обычно рассматривает заявление в течение 2 рабочих дней, при дополнительной проверке — до 10 рабочих дней." },
         { question: "Что нужно для оформления апостиля?", answer: "Паспорт и сам документ, на который нужен апостиль." },
         { question: "Можно ли оформить апостиль дистанционно?", answer: "Да. Пришлите фото документа и паспорта через сайт или Telegram, мы подскажем, как передать оригинал, и будем сообщать о ходе оформления." },
         { question: "Где в Намангане вы принимаете документы?", answer: "В нашем офисе по адресу Boburshoh ko'chasi, 3. Работаем с 09:00 до 19:00, с понедельника по субботу." },
@@ -63,16 +63,16 @@ export const apostilNamangan: ServiceDef = {
     },
     uz: {
       label: "Namanganda apostil",
-      metaTitle: "Namanganda apostil: diplom, attestat, hujjatlar — 3–5 kun",
+      metaTitle: "Namanganda apostil: diplom, attestat, hujjatlar",
       metaDescription:
-        "Namanganda diplom, attestat va boshqa hujjatlarga apostil qo'yish. Onlayn yoki ofisda topshirish, muddati 3–5 kun, 220 000 so'mdan. Lingua Translation.",
+        "Namanganda diplom, attestat va boshqa hujjatlarga apostil qo'yish. Onlayn yoki ofisda topshirish, muddati 3–5 ish kuni, 220 000 so'mdan. Lingua Translation.",
       h1: "Namanganda apostil qo'yish",
       intro:
         "Diplom, attestat va boshqa rasmiy hujjatlarga chet elda foydalanish uchun apostil qo'yamiz. Namangandagi ofisimizda yoki butun O'zbekiston bo'ylab onlayn qabul qilamiz.",
       serviceName: "Namanganda hujjatlarga apostil qo'yish",
       benefits: [
-        "Rasmiylashtirish muddati — 3–5 kun",
-        "Narxi 220 000 dan 270 000 so'mgacha",
+        "Rasmiylashtirish muddati",
+        "Narxi 220 000 dan 270 000 so'mgacha, davlat yig'imi kiritilgan",
         "Faqat pasport va hujjatning o'zi kerak",
         "Masofadan ishlaymiz: hujjat rasmi va onlayn kuzatuv",
         "Namangan ofisida qabul: Boburshoh ko'chasi, 3",
@@ -96,7 +96,7 @@ export const apostilNamangan: ServiceDef = {
         {
           heading: "Muddat va narx",
           paragraphs: [
-            "Byromizda rasmiylashtirish 3–5 kun oladi, narxi hujjatga qarab 220 000 dan 270 000 so'mgacha. Aniq narx va muddatni menejer hujjatni ko'rgach aytadi.",
+            "Byromizda rasmiylashtirish 3–5 ish kuni oladi, narxi hujjatga qarab 220 000 dan 270 000 so'mgacha, davlat yig'imi allaqachon kiritilgan. Aniq narxni menejer hujjatni ko'rgach aytadi.",
             "Davlat organi odatda arizani 2 ish kuni ichida ko'radi, imzo, vakolat yoki muhrni qo'shimcha tekshirish kerak bo'lsa, muddat 10 ish kunigacha uzaytirilishi mumkin.",
           ],
         },
@@ -109,8 +109,8 @@ export const apostilNamangan: ServiceDef = {
         },
       ],
       faqs: [
-        { question: "Namanganda apostil qancha turadi?", answer: "Byromizda hujjatga qarab 220 000 dan 270 000 so'mgacha. Aniq narxni menejer hujjatni ko'rgach aytadi." },
-        { question: "Apostil qancha vaqt oladi?", answer: "Byromizda 3–5 kun. Davlat organi odatda arizani 2 ish kunida ko'radi, qo'shimcha tekshiruvda — 10 ish kunigacha." },
+        { question: "Namanganda apostil qancha turadi?", answer: "Byromizda hujjatga qarab 220 000 dan 270 000 so'mgacha. Davlat yig'imi narxga kiritilgan. Aniq narxni menejer hujjatni ko'rgach aytadi." },
+        { question: "Apostil qancha vaqt oladi?", answer: "Byromizda 3–5 ish kuni. Davlat organi odatda arizani 2 ish kunida ko'radi, qo'shimcha tekshiruvda — 10 ish kunigacha." },
         { question: "Apostil uchun nima kerak?", answer: "Pasport va apostil kerak bo'lgan hujjatning o'zi." },
         { question: "Apostilni masofadan rasmiylashtirish mumkinmi?", answer: "Ha. Hujjat va pasport rasmini sayt yoki Telegram orqali yuboring, asl nusxani qanday topshirishni aytamiz va jarayondan xabardor qilib turamiz." },
         { question: "Namanganda hujjatlarni qayerda qabul qilasiz?", answer: "Boburshoh ko'chasi, 3 manzilidagi ofisimizda. Ish vaqti — dushanbadan shanbagacha 09:00 dan 19:00 gacha." },
@@ -120,16 +120,16 @@ export const apostilNamangan: ServiceDef = {
     },
     en: {
       label: "Apostille in Namangan",
-      metaTitle: "Apostille in Namangan: Diplomas, Certificates, Documents — 3–5 Days",
+      metaTitle: "Apostille in Namangan: Diplomas, Certificates, Documents",
       metaDescription:
-        "Apostille for diplomas, certificates and other documents in Namangan. Submit online or at our office, 3–5 days, from 220,000 UZS. Lingua Translation.",
+        "Apostille for diplomas, certificates and other documents in Namangan. Submit online or at our office, 3–5 working days, from 220,000 UZS. Lingua Translation.",
       h1: "Apostille in Namangan",
       intro:
         "We obtain apostilles for diplomas, certificates and other official documents for use abroad. Walk in to our Namangan office or apply online from anywhere in Uzbekistan.",
       serviceName: "Apostille for documents in Namangan",
       benefits: [
-        "Turnaround of 3–5 days",
-        "Price from 220,000 to 270,000 UZS",
+        "Turnaround of 3–5 working days",
+        "Price from 220,000 to 270,000 UZS, state fee included",
         "Only your passport and the document are needed",
         "Remote service: send a photo of the document and we handle the rest",
         "Walk-in at our Namangan office: Boburshoh ko'chasi, 3",
@@ -153,7 +153,7 @@ export const apostilNamangan: ServiceDef = {
         {
           heading: "Timing and cost",
           paragraphs: [
-            "At our agency the process takes 3–5 days and costs from 220,000 to 270,000 UZS depending on the document. A manager will confirm the exact price and timing after seeing the document.",
+            "At our agency the process takes 3–5 working days and costs from 220,000 to 270,000 UZS depending on the document, with the state fee already included. A manager will confirm the exact price after seeing the document.",
             "The government body usually reviews an application within 2 working days; if additional verification of the signature, authority or seal is needed, this can extend to 10 working days.",
           ],
         },
@@ -166,8 +166,8 @@ export const apostilNamangan: ServiceDef = {
         },
       ],
       faqs: [
-        { question: "How much does an apostille cost in Namangan?", answer: "At our agency from 220,000 to 270,000 UZS depending on the document. A manager confirms the exact cost after seeing the document." },
-        { question: "How long does an apostille take?", answer: "3–5 days at our agency. The government body usually reviews the application within 2 working days, or up to 10 working days if extra verification is needed." },
+        { question: "How much does an apostille cost in Namangan?", answer: "At our agency from 220,000 to 270,000 UZS depending on the document. The state fee is already included. A manager confirms the exact cost after seeing the document." },
+        { question: "How long does an apostille take?", answer: "3–5 working days at our agency. The government body usually reviews the application within 2 working days, or up to 10 working days if extra verification is needed." },
         { question: "What do I need to obtain an apostille?", answer: "Your passport and the document that needs the apostille." },
         { question: "Can I get an apostille remotely?", answer: "Yes. Send a photo of the document and your passport through the website or Telegram, we will explain how to hand over the original and keep you updated." },
         { question: "Where in Namangan do you accept documents?", answer: "At our office at Boburshoh ko'chasi, 3. Open 09:00 to 19:00, Monday to Saturday." },

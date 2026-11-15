@@ -46,7 +46,7 @@ export const apostil: ServiceDef = {
       faqs: [
         { question: "Что такое апостиль?", answer: "Апостиль — это специальный штамп, который подтверждает подлинность подписи и печати на документе. Апостиль нужен для использования документов в странах, подписавших Гаагскую конвенцию." },
         { question: "Для каких документов нужен апостиль?", answer: "Апостиль нужен для дипломов, аттестатов, свидетельств о рождении, браке, справок из государственных органов и других официальных документов." },
-        { question: "Сколько времени занимает апостиль?", answer: "В нашем бюро 3–5 дней. Государственный орган обычно рассматривает заявление 2 рабочих дня, при дополнительной проверке — до 10 рабочих дней." },
+        { question: "Сколько времени занимает апостиль?", answer: "В нашем бюро 3–5 рабочих дней. Государственный орган обычно рассматривает заявление 2 рабочих дня, при дополнительной проверке — до 10 рабочих дней." },
         { question: "Нужно ли переводить документ перед апостилем?", answer: "Сначала делается апостиль на оригинальный документ, затем нотариальный перевод. Иногда порядок меняется в зависимости от требований принимающей страны." },
         { question: "Вы помогаете с апостилем или только с переводом?", answer: "Мы консультируем по всему процессу и помогаем с переводом документов для апостиля." },
       ],
@@ -93,7 +93,7 @@ export const apostil: ServiceDef = {
       faqs: [
         { question: "Apostil nima?", answer: "Apostil — hujjatdagi imzo va muhrning haqiqiyligini tasdiqlovchi maxsus shtamp. U Gaaga konvensiyasiga qo'shilgan davlatlarda hujjatni ishlatish uchun kerak." },
         { question: "Qaysi hujjatlar uchun apostil kerak?", answer: "Diplom, attestat, tug'ilganlik va nikoh guvohnomalari, davlat organlarining ma'lumotnomalari va boshqa rasmiy hujjatlar uchun." },
-        { question: "Apostil qancha vaqt oladi?", answer: "Byromizda 3–5 kun. Davlat organi odatda arizani 2 ish kunida ko'radi, qo'shimcha tekshiruvda — 10 ish kunigacha." },
+        { question: "Apostil qancha vaqt oladi?", answer: "Byromizda 3–5 ish kuni. Davlat organi odatda arizani 2 ish kunida ko'radi, qo'shimcha tekshiruvda — 10 ish kunigacha." },
         { question: "Apostildan oldin hujjatni tarjima qilish kerakmi?", answer: "Avval asl hujjatga apostil qo'yiladi, keyin notarial tarjima qilinadi. Qabul qiluvchi davlat talabiga qarab tartib o'zgarishi mumkin." },
         { question: "Apostil bo'yicha ham yordam berasizmi yoki faqat tarjimami?", answer: "Butun jarayon bo'yicha maslahat beramiz va apostil uchun hujjatlarni tarjima qilamiz." },
       ],
@@ -140,7 +140,7 @@ export const apostil: ServiceDef = {
       faqs: [
         { question: "What is an apostille?", answer: "An apostille is a special stamp that confirms the authenticity of the signature and seal on a document. It is needed to use documents in countries that are parties to the Hague Convention." },
         { question: "Which documents need an apostille?", answer: "Diplomas, school certificates, birth and marriage certificates, certificates from government bodies and other official documents." },
-        { question: "How long does an apostille take?", answer: "3–5 days at our agency. The government body usually reviews the application within 2 working days, or up to 10 working days if extra verification is needed." },
+        { question: "How long does an apostille take?", answer: "3–5 working days at our agency. The government body usually reviews the application within 2 working days, or up to 10 working days if extra verification is needed." },
         { question: "Do I need to translate the document before the apostille?", answer: "The apostille is first placed on the original document, then the notarized translation is made. The order sometimes changes depending on the requirements of the receiving country." },
         { question: "Do you help with the apostille or only with translation?", answer: "We advise on the whole process and translate documents for the apostille." },
       ],

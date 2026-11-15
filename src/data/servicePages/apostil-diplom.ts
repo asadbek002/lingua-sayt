@@ -8,15 +8,15 @@ export const apostilDiplom: ServiceDef = {
       label: "Апостиль на диплом",
       metaTitle: "Апостиль на диплом и аттестат в Узбекистане: как получить, сроки, цена",
       metaDescription:
-        "Как поставить апостиль на диплом и аттестат в Узбекистане: какой орган, документы, сроки, сбор. Оформление за 3–5 дней, от 220 000 сум.",
+        "Как поставить апостиль на диплом и аттестат в Узбекистане: какой орган, документы, сроки, сбор. Оформление за 3–5 рабочих дней, от 220 000 сум.",
       h1: "Апостиль на диплом и аттестат",
       intro:
         "Как получить апостиль на диплом, аттестат или сертификат об образовании в Узбекистане: какой орган его ставит, сколько это занимает и стоит, и как мы можем сделать это за вас.",
       serviceName: "Апостиль на диплом и аттестат",
       benefits: [
         "Апостиль на дипломы, аттестаты, приложения и сертификаты",
-        "Срок оформления — 3–5 дней",
-        "Стоимость от 220 000 до 270 000 сум",
+        "Срок оформления",
+        "Стоимость от 220 000 до 270 000 сум, государственный сбор включён",
         "Нужны только паспорт и сам документ",
         "Дистанционная работа и приём в офисах в Намангане и Ташкенте",
         "Нотариальный перевод диплома с апостилем в том же бюро",
@@ -53,15 +53,15 @@ export const apostilDiplom: ServiceDef = {
         {
           heading: "Как мы помогаем с апостилем на диплом",
           paragraphs: [
-            "Мы берём на себя подготовку и подачу: для оформления нужны только паспорт и сам документ. Срок в нашем бюро — 3–5 дней, стоимость — от 220 000 до 270 000 сум в зависимости от документа, точную цену называет менеджер после просмотра.",
+            "Мы берём на себя подготовку и подачу: для оформления нужны только паспорт и сам документ. Срок в нашем бюро — 3–5 рабочих дней, стоимость — от 220 000 до 270 000 сум в зависимости от документа, государственный сбор уже включён; точную цену называет менеджер после просмотра.",
             "Работаем дистанционно и принимаем документы в офисах в Намангане (Boburshoh ko'chasi, 3) и в Ташкенте (Bog'ishamol ko'chasi, 21-B). Для подачи за границей делаем нотариальный перевод диплома с апостилем.",
           ],
         },
       ],
       faqs: [
         { question: "Какой орган ставит апостиль на диплом в Узбекистане?", answer: "На документы среднего специального, профессионального и высшего образования — Агентство по оценке знаний и квалификаций, на школьные аттестаты — Министерство дошкольного и школьного образования. Названия органов могут меняться, мы уточняем их при каждом обращении." },
-        { question: "Сколько стоит апостиль на диплом?", answer: "В нашем бюро от 220 000 до 270 000 сум в зависимости от документа. Государственный сбор — 20 % от БРВ (при подаче через портал — 90 % от сбора), точную итоговую сумму называет менеджер." },
-        { question: "Сколько времени занимает апостиль на диплом?", answer: "3–5 дней в нашем бюро. Орган обычно рассматривает заявление 2 рабочих дня, при дополнительной проверке — до 10 рабочих дней." },
+        { question: "Сколько стоит апостиль на диплом?", answer: "В нашем бюро от 220 000 до 270 000 сум в зависимости от документа. Государственный сбор (20 % от БРВ, при подаче через портал — 90 % от сбора) уже включён в эту сумму." },
+        { question: "Сколько времени занимает апостиль на диплом?", answer: "3–5 рабочих дней в нашем бюро. Орган обычно рассматривает заявление 2 рабочих дня, при дополнительной проверке — до 10 рабочих дней." },
         { question: "Что нужно для оформления?", answer: "Паспорт и сам диплом или аттестат." },
         { question: "Можно ли оформить апостиль на диплом дистанционно?", answer: "Да. Пришлите фото документа и паспорта через сайт или Telegram, мы подскажем, как передать оригинал, и будем сообщать о ходе оформления." },
         { question: "Нужно ли переводить диплом?", answer: "Зависит от страны назначения. Если нужен перевод, делаем нотариальный перевод диплома с апостилем в нашем бюро." },
@@ -72,15 +72,15 @@ export const apostilDiplom: ServiceDef = {
       label: "Diplomga apostil",
       metaTitle: "Diplom va attestatga apostil: qanday olinadi, muddat, narx",
       metaDescription:
-        "O'zbekistonda diplom va attestatga apostil qanday qo'yiladi: qaysi organ, hujjatlar, muddat, yig'im. 3–5 kunda rasmiylashtirish, 220 000 so'mdan.",
+        "O'zbekistonda diplom va attestatga apostil qanday qo'yiladi: qaysi organ, hujjatlar, muddat, yig'im. 3–5 ish kunida rasmiylashtirish, 220 000 so'mdan.",
       h1: "Diplom va attestatga apostil",
       intro:
         "O'zbekistonda diplom, attestat yoki ta'lim sertifikatiga apostil qanday olinadi: qaysi organ qo'yadi, qancha vaqt va pul ketadi hamda buni biz sizning o'rningizga qanday qilib beramiz.",
       serviceName: "Diplom va attestatga apostil",
       benefits: [
         "Diplom, attestat, ilova va sertifikatlarga apostil",
-        "Rasmiylashtirish muddati — 3–5 kun",
-        "Narxi 220 000 dan 270 000 so'mgacha",
+        "Rasmiylashtirish muddati",
+        "Narxi 220 000 dan 270 000 so'mgacha, davlat yig'imi kiritilgan",
         "Faqat pasport va hujjatning o'zi kerak",
         "Masofadan ishlash, Namangan va Toshkent ofislarida qabul",
         "Apostilli diplomning notarial tarjimasi ham shu byuroda",
@@ -117,15 +117,15 @@ export const apostilDiplom: ServiceDef = {
         {
           heading: "Diplomga apostil qo'yishda qanday yordam beramiz",
           paragraphs: [
-            "Tayyorlash va topshirishni o'z zimmamizga olamiz: rasmiylashtirish uchun faqat pasport va hujjatning o'zi kerak. Byromizda muddat 3–5 kun, narxi hujjatga qarab 220 000 dan 270 000 so'mgacha, aniq narxni menejer hujjatni ko'rgach aytadi.",
+            "Tayyorlash va topshirishni o'z zimmamizga olamiz: rasmiylashtirish uchun faqat pasport va hujjatning o'zi kerak. Byromizda muddat 3–5 ish kuni, narxi hujjatga qarab 220 000 dan 270 000 so'mgacha, davlat yig'imi allaqachon kiritilgan; aniq narxni menejer hujjatni ko'rgach aytadi.",
             "Masofadan ishlaymiz va Namangandagi (Boburshoh ko'chasi, 3) hamda Toshkentdagi (Bog'ishamol ko'chasi, 21-B) ofislarimizda hujjat qabul qilamiz. Chet elga topshirish uchun apostilli diplomning notarial tarjimasini ham qilib beramiz.",
           ],
         },
       ],
       faqs: [
         { question: "O'zbekistonda diplomga apostilni qaysi organ qo'yadi?", answer: "O'rta maxsus, kasb-hunar va oliy ta'lim hujjatlariga — Bilim va malakalarni baholash agentligi, maktab attestatlariga — Maktabgacha va maktab ta'limi vazirligi. Organlar nomi o'zgarishi mumkin, har bir murojaatda aniqlashtiramiz." },
-        { question: "Diplomga apostil qancha turadi?", answer: "Byromizda hujjatga qarab 220 000 dan 270 000 so'mgacha. Davlat yig'imi — BHMning 20 foizi (portal orqali topshirilganda yig'imning 90 foizi), yakuniy summani menejer aytadi." },
-        { question: "Diplomga apostil qancha vaqt oladi?", answer: "Byromizda 3–5 kun. Organ odatda arizani 2 ish kunida ko'radi, qo'shimcha tekshiruvda — 10 ish kunigacha." },
+        { question: "Diplomga apostil qancha turadi?", answer: "Byromizda hujjatga qarab 220 000 dan 270 000 so'mgacha. Davlat yig'imi (BHMning 20 foizi, portal orqali topshirilganda yig'imning 90 foizi) shu summaga kiritilgan." },
+        { question: "Diplomga apostil qancha vaqt oladi?", answer: "Byromizda 3–5 ish kuni. Organ odatda arizani 2 ish kunida ko'radi, qo'shimcha tekshiruvda — 10 ish kunigacha." },
         { question: "Rasmiylashtirish uchun nima kerak?", answer: "Pasport va diplom yoki attestatning o'zi." },
         { question: "Diplomga apostilni masofadan rasmiylashtirish mumkinmi?", answer: "Ha. Hujjat va pasport rasmini sayt yoki Telegram orqali yuboring, asl nusxani qanday topshirishni aytamiz va jarayondan xabardor qilib turamiz." },
         { question: "Diplomni tarjima qilish kerakmi?", answer: "Boradigan davlatga bog'liq. Tarjima kerak bo'lsa, apostilli diplomning notarial tarjimasini byromizda qilamiz." },
@@ -136,15 +136,15 @@ export const apostilDiplom: ServiceDef = {
       label: "Diploma apostille",
       metaTitle: "Apostille on a Diploma or Certificate in Uzbekistan: How, Timing, Cost",
       metaDescription:
-        "How to get an apostille on a diploma or school certificate in Uzbekistan: which authority, documents, timing, fee. Done in 3–5 days, from 220,000 UZS.",
+        "How to get an apostille on a diploma or school certificate in Uzbekistan: which authority, documents, timing, fee. Done in 3–5 working days, from 220,000 UZS.",
       h1: "Apostille on a diploma or certificate",
       intro:
         "How to get an apostille on a diploma, school certificate or education certificate in Uzbekistan: which authority issues it, how long it takes and what it costs, and how we can do it for you.",
       serviceName: "Apostille on a diploma and certificate",
       benefits: [
         "Apostilles on diplomas, school certificates, supplements and certificates",
-        "Turnaround of 3–5 days",
-        "Price from 220,000 to 270,000 UZS",
+        "Turnaround of 3–5 working days",
+        "Price from 220,000 to 270,000 UZS, state fee included",
         "Only your passport and the document are needed",
         "Remote service and walk-in at our Namangan and Tashkent offices",
         "Notarized translation of the apostilled diploma at the same agency",
@@ -181,15 +181,15 @@ export const apostilDiplom: ServiceDef = {
         {
           heading: "How we help with a diploma apostille",
           paragraphs: [
-            "We take care of preparation and submission: only your passport and the document are needed. At our agency it takes 3–5 days and costs from 220,000 to 270,000 UZS depending on the document; a manager confirms the exact price after seeing it.",
+            "We take care of preparation and submission: only your passport and the document are needed. At our agency it takes 3–5 working days and costs from 220,000 to 270,000 UZS depending on the document, with the state fee already included; a manager confirms the exact price after seeing it.",
             "We work remotely and accept documents at our offices in Namangan (Boburshoh ko'chasi, 3) and Tashkent (Bog'ishamol ko'chasi, 21-B). For submission abroad we also provide a notarized translation of the apostilled diploma.",
           ],
         },
       ],
       faqs: [
         { question: "Which authority places an apostille on a diploma in Uzbekistan?", answer: "The Agency for Assessment of Knowledge and Qualifications for secondary specialised, vocational and higher education documents, and the Ministry of Preschool and School Education for school certificates. Authority names can change, so we confirm them with each request." },
-        { question: "How much does an apostille on a diploma cost?", answer: "At our agency from 220,000 to 270,000 UZS depending on the document. The state fee is 20% of the BCV (90% of the fee when filed through the portal); a manager confirms the final amount." },
-        { question: "How long does it take?", answer: "3–5 days at our agency. The authority usually reviews the application within 2 working days, up to 10 working days with extra verification." },
+        { question: "How much does an apostille on a diploma cost?", answer: "At our agency from 220,000 to 270,000 UZS depending on the document. The state fee (20% of the BCV, 90% of it when filed through the portal) is already included in this amount." },
+        { question: "How long does it take?", answer: "3–5 working days at our agency. The authority usually reviews the application within 2 working days, up to 10 working days with extra verification." },
         { question: "What do I need?", answer: "Your passport and the diploma or certificate itself." },
         { question: "Can an apostille on a diploma be obtained remotely?", answer: "Yes. Send a photo of the document and your passport through the website or Telegram, we will explain how to hand over the original and keep you updated." },
         { question: "Do I need to translate the diploma?", answer: "It depends on the destination country. If a translation is needed, we make a notarized translation of the apostilled diploma at our agency." },
