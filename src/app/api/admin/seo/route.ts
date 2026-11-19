@@ -16,7 +16,11 @@ export async function GET(req: NextRequest) {
   if (denied) return denied;
 
   try {
-    const tasks = await prisma.seoTask.findMany({ orderBy: { createdAt: "desc" } });
+    // Content-agent drafts have their own page (/admin/agent)
+    const tasks = await prisma.seoTask.findMany({
+      where: { type: { notIn: ["AGENT_GBP", "AGENT_TG"] } },
+      orderBy: { createdAt: "desc" },
+    });
     return NextResponse.json({ tasks });
   } catch (err) {
     console.error("[API/admin/seo] GET error:", err);

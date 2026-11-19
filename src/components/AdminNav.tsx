@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/admin/blog", label: "Блог" },
   { href: "/admin/seo", label: "SEO" },
   { href: "/admin/google-business", label: "Google Business" },
+  { href: "/admin/agent", label: "Агент" },
 ];
 
 export default function AdminNav({

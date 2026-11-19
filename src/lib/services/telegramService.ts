@@ -103,3 +103,21 @@ export async function sendTelegramText(text: string): Promise<boolean> {
   const results = await Promise.all(ADMIN_CHAT_IDS.map((id) => sendMessage(id, safe)));
   return results.some(Boolean);
 }
+
+/** Posts plain text to a channel (e.g. "@my_channel" or "-100…"); the bot must be an admin of that channel. */
+export async function sendTelegramToChannel(chatId: string, text: string): Promise<boolean> {
+  if (!BOT_TOKEN || !chatId) return false;
+  try {
+    const res = await fetch(`${TG_API}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text }),
+    });
+    const data = await res.json();
+    if (data.ok !== true) console.error(`[TelegramService] channel post to ${chatId} refused: ${data.description ?? res.status}`);
+    return data.ok === true;
+  } catch (err) {
+    console.error("[TelegramService] channel post error:", err);
+    return false;
+  }
+}

@@ -1,9 +1,9 @@
-interface AiResponse {
+export interface AiResponse {
   content: string;
   error?: string;
 }
 
-async function callAI(prompt: string, maxTokens = 1500): Promise<AiResponse> {
+export async function callAI(prompt: string, maxTokens = 1500): Promise<AiResponse> {
   // Read env at call time; AI is on whenever a key is present unless AI_ENABLED=false
   const apiKey = process.env.AI_API_KEY || "";
   const enabled = process.env.AI_ENABLED !== "false" && !!apiKey;

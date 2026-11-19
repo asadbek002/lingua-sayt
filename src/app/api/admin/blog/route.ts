@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
+import { draftChannelAnnouncement } from "@/lib/services/contentAgentService";
 import { requireAdmin } from "@/lib/serverAuth";
 import { slugify } from "@/lib/utils/slug";
 import { TRANSLATED_LOCALES, type TranslatedLocale } from "@/lib/blogLocale";
@@ -121,6 +122,7 @@ export async function POST(req: NextRequest) {
     await applyTranslations(post.id, parsed.ops);
 
     refreshPublicPages(post.slug);
+    if (post.status === "published") after(() => draftChannelAnnouncement(post).catch(() => {}));
     return NextResponse.json({ success: true, post });
   } catch (err) {
     if (isMissingTable(err)) return NextResponse.json({ error: MIGRATION_HINT }, { status: 500 });
@@ -166,6 +168,8 @@ export async function PATCH(req: NextRequest) {
 
     refreshPublicPages(post.slug);
     if (existing.slug !== post.slug) refreshPublicPages(existing.slug);
+    // First publication: the content agent drafts a Telegram channel announcement for approval
+    if (status === "published" && !existing.publishedAt) after(() => draftChannelAnnouncement(post).catch(() => {}));
     return NextResponse.json({ success: true, post });
   } catch (err) {
     if (isMissingTable(err)) return NextResponse.json({ error: MIGRATION_HINT }, { status: 500 });
