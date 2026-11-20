@@ -121,3 +121,25 @@ export async function sendTelegramToChannel(chatId: string, text: string): Promi
     return false;
   }
 }
+
+/** Posts a photo (public URL) with the text as caption; text longer than a caption follows as its own message. */
+export async function sendTelegramPhotoToChannel(chatId: string, photoUrl: string, text: string): Promise<boolean> {
+  if (!BOT_TOKEN || !chatId) return false;
+  const fits = text.length <= 1024;
+  try {
+    const res = await fetch(`${TG_API}/sendPhoto`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, photo: photoUrl, ...(fits ? { caption: text } : {}) }),
+    });
+    const data = await res.json();
+    if (data.ok !== true) {
+      console.error(`[TelegramService] channel photo to ${chatId} refused: ${data.description ?? res.status}`);
+      return false;
+    }
+  } catch (err) {
+    console.error("[TelegramService] channel photo error:", err);
+    return false;
+  }
+  return fits ? true : sendTelegramToChannel(chatId, text);
+}

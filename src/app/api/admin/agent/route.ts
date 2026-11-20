@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/serverAuth";
 import { prisma } from "@/lib/prisma";
 import { AGENT_TYPES, publishAgentDraft, rejectAgentDraft } from "@/lib/services/contentAgentService";
 
-const TYPES = [AGENT_TYPES.gbp, AGENT_TYPES.channel];
+const TYPES = [AGENT_TYPES.gbp, AGENT_TYPES.channel, AGENT_TYPES.reel];
 
 export async function GET(req: NextRequest) {
   const denied = requireAdmin(req);

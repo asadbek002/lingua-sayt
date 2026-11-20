@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const url = `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`;
+  const image = `${SITE_URL}/api/agent/card/post/${encodeURIComponent(post.slug)}.jpg`;
   return {
     title: post.base.title,
     description: post.base.description || "",
@@ -39,7 +40,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "article",
       publishedTime: post.publishedAt ?? undefined,
       modifiedTime: post.updatedAt,
+      images: [{ url: image, width: 1200, height: 630, alt: post.base.title }],
     },
+    twitter: { card: "summary_large_image", title: post.base.title, images: [image] },
   };
 }
 

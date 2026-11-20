@@ -22,6 +22,15 @@ export default function BlogPostView({ post }: { post: PublicPost }) {
           {t.blog.back}
         </Link>
 
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`/api/agent/card/post/${encodeURIComponent(post.slug)}.jpg${locale === "ru" ? "" : `?lang=${locale}`}`}
+          alt={c.title}
+          width={1200}
+          height={630}
+          className="w-full h-auto rounded-2xl mb-8"
+        />
+
         <h1 className="text-3xl sm:text-4xl font-bold text-[#1a1a2e] mb-4">{c.title}</h1>
 
         {post.publishedAt && (

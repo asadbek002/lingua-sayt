@@ -331,7 +331,7 @@ export async function replyToReview(locationId: string, reviewId: string, commen
   }
 }
 
-export async function createPost(locationId: string, summary: string) {
+export async function createPost(locationId: string, summary: string, imageUrl?: string) {
   if (!GOOGLE_BUSINESS_ENABLED) {
     return { error: "Интеграция отключена (GOOGLE_BUSINESS_ENABLED=false)" };
   }
@@ -352,7 +352,12 @@ export async function createPost(locationId: string, summary: string) {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ languageCode: "ru", summary, topicType: "STANDARD" }),
+        body: JSON.stringify({
+          languageCode: "ru",
+          summary,
+          topicType: "STANDARD",
+          ...(imageUrl ? { media: [{ mediaFormat: "PHOTO", sourceUrl: imageUrl }] } : {}),
+        }),
       }
     );
     return res.ok ? { success: true } : { error: await googleError(res, "Не удалось опубликовать пост") };

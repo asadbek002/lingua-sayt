@@ -35,3 +35,15 @@ export const GBP_TOPICS: { topic: string; slug: string; namangan?: string; tashk
   { topic: "Перевод медицинских документов", slug: "tibbiy-hujjatlar-tarjimasi" },
   { topic: "Приём документов онлайн: пришлите фото — мы сделаем остальное", slug: "", namangan: "tarjima-namangan", tashkent: "tarjima-tashkent" },
 ];
+
+// Instagram reel ideas (one script a week, in order, then from the start again).
+export const REEL_TOPICS: string[] = [
+  "3 ошибки при переводе документов для визы",
+  "Апостиль за 3–5 рабочих дней: как это работает",
+  "Как отправить документы на перевод, не выходя из дома",
+  "Перевод диплома для учёбы в Корее: что нужно знать",
+  "Чем нотариальный перевод отличается от обычного",
+  "Почему имя в переводе должно совпадать с загранпаспортом",
+  "Один день из жизни бюро переводов",
+  "Какие документы нельзя апостилировать",
+];

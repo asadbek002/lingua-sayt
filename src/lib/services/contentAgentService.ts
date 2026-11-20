@@ -4,16 +4,19 @@
 import { prisma } from "@/lib/prisma";
 import { callAI, parseJsonObject, translateBlogPost } from "./aiContentService";
 import { createPost, locationIds } from "./googleBusinessService";
-import { sendTelegramText, sendTelegramToChannel } from "./telegramService";
+import { sendTelegramText, sendTelegramPhotoToChannel } from "./telegramService";
 import { company } from "@/data/company";
 import { serviceDefs } from "@/data/servicePages";
-import { BLOG_TOPICS, GBP_TOPICS } from "@/data/agentTopics";
+import { BLOG_TOPICS, GBP_TOPICS, REEL_TOPICS } from "@/data/agentTopics";
 import { slugify } from "@/lib/utils/slug";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://linguatranslation.uz";
 const CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID || "";
 
-export const AGENT_TYPES = { gbp: "AGENT_GBP", channel: "AGENT_TG" } as const;
+export const AGENT_TYPES = { gbp: "AGENT_GBP", channel: "AGENT_TG", reel: "AGENT_REEL" } as const;
+
+/** Public URL of the branded image for a draft (rendered by /api/agent/card). */
+export const draftImageUrl = (id: string) => `${SITE_URL}/api/agent/card/task/${id}.jpg`;
 export type Office = "namangan" | "tashkent";
 const OFFICE_NAMES: Record<Office, string> = { namangan: "Наманган", tashkent: "Ташкент" };
 
@@ -175,6 +178,41 @@ export async function draftChannelAnnouncement(post: { title: string; slug: stri
   await notifyStaff(`🤖 Агент подготовил анонс для Telegram-канала: «${post.title}».\nПроверьте и опубликуйте: ${SITE_URL}/admin/agent`);
 }
 
+// ---------- Instagram reel scripts ----------
+
+/** Writes a ready-to-shoot script for a 20–30 second reel (uz + ru) for the staff to produce in their video tool. */
+export async function runReelAgent(): Promise<string> {
+  const done = await prisma.seoTask.count({ where: { type: AGENT_TYPES.reel } });
+  const topic = REEL_TOPICS[done % REEL_TOPICS.length];
+  const res = await callAI(
+    `Ты SMM-специалист бюро переводов Lingua Translation (Instagram @lingua_translation1, аудитория — Узбекистан).
+Напиши сценарий рилса на 20–30 секунд по теме: "${topic}".
+Формат ответа (заголовки оставь как есть):
+ХУК (первые 2 секунды, крупный текст на экране):
+— uz: …
+— ru: …
+ТЕКСТ ВЕДУЩЕГО (uz, разговорно, 60–80 слов):
+…
+ТЕКСТ ВЕДУЩЕГО (ru, 60–80 слов):
+…
+ПОДПИСИ НА ЭКРАНЕ (3–4 коротких, по секундам):
+…
+ВИЗУАЛ (что показать в кадре: офис, документы без личных данных, логотип):
+…
+ОПИСАНИЕ К ПОСТУ (uz + ru, с призывом написать в Direct или Telegram, 3–5 хэштегов):
+…
+Пиши живо, без канцелярита. Цифры, цены и сроки — только из фактов ниже, ничего не выдумывай:
+${factSheet()}`,
+    2000
+  );
+  if (res.error || !res.content.trim()) return `AI error: ${res.error ?? "empty"}`;
+  await prisma.seoTask.create({
+    data: { type: AGENT_TYPES.reel, title: topic, description: res.content.trim().slice(0, 6000), targetUrl: "instagram" },
+  });
+  await notifyStaff(`🤖 Агент подготовил сценарий рилса: «${topic}».\nОткройте: ${SITE_URL}/admin/agent`);
+  return `reel script "${topic}"`;
+}
+
 // ---------- Approval ----------
 
 export async function publishAgentDraft(id: string, text: string): Promise<{ ok: boolean; error?: string }> {
@@ -185,12 +223,13 @@ export async function publishAgentDraft(id: string, text: string): Promise<{ ok:
 
   if (task.type === AGENT_TYPES.gbp) {
     const office = task.targetUrl === "tashkent" ? "tashkent" : "namangan";
-    const r = await createPost(locationIds[office], body);
+    const r = await createPost(locationIds[office], body, draftImageUrl(id));
     if ("error" in r && r.error) return { ok: false, error: r.error };
   } else if (task.type === AGENT_TYPES.channel) {
-    const ok = await sendTelegramToChannel(task.targetUrl || CHANNEL_ID, body);
+    const ok = await sendTelegramPhotoToChannel(task.targetUrl || CHANNEL_ID, draftImageUrl(id), body);
     if (!ok) return { ok: false, error: "Telegram не принял сообщение (бот должен быть админом канала)" };
-  } else {
+  } else if (task.type !== AGENT_TYPES.reel) {
+    // A reel script is not posted anywhere by us: "publishing" just marks it as used
     return { ok: false, error: "Неизвестный тип черновика" };
   }
 

@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   try {
     // Content-agent drafts have their own page (/admin/agent)
     const tasks = await prisma.seoTask.findMany({
-      where: { type: { notIn: ["AGENT_GBP", "AGENT_TG"] } },
+      where: { type: { notIn: ["AGENT_GBP", "AGENT_TG", "AGENT_REEL"] } },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ tasks });

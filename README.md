@@ -32,6 +32,8 @@ The agent drafts content; nothing is published without approval in the admin pan
 - **Blog** (`job=blog`): picks the next topic from `src/data/agentTopics.ts` that is not in the blog yet, writes the article in Russian from a fixed fact sheet (prices, terms, official apostille rules), translates it to Uzbek and English and saves it as a **draft** in `/admin/blog`.
 - **Google Business** (`job=gbp`): drafts one post per office, rotating through `GBP_TOPICS`; approve on `/admin/agent`.
 - **Telegram channel**: when a blog post is published for the first time, an announcement (uz + ru) is drafted on `/admin/agent`.
+- **Instagram reels** (`job=reel`): a weekly ready-to-shoot script (hook, presenter text uz + ru, captions, post description) to produce in an AI-video tool.
+- **Images**: Google Business posts and channel announcements get a branded card (`/api/agent/card/task/<id>.jpg`); blog posts get a cover and link preview (`/api/agent/card/post/<slug>.jpg`). Rendered with sharp: the server needs a font with Cyrillic, e.g. `apt install fonts-dejavu-core`.
 - Every new draft is announced in the staff chat (`TELEGRAM_ADMIN_CHAT_IDS`).
 
 Environment (`.env`):
@@ -46,4 +48,5 @@ Schedule (server crontab, `Asia/Tashkent`): 2 articles and 3 rounds of Google Bu
 ```
 0 10 * * 2,5   curl -s -X POST -H "x-agent-secret: $AGENT_CRON_SECRET" "http://127.0.0.1:3001/api/agent/run?job=blog"
 0 11 * * 1,3,6 curl -s -X POST -H "x-agent-secret: $AGENT_CRON_SECRET" "http://127.0.0.1:3001/api/agent/run?job=gbp"
+0 10 * * 4     curl -s -X POST -H "x-agent-secret: $AGENT_CRON_SECRET" "http://127.0.0.1:3001/api/agent/run?job=reel"
 ```
