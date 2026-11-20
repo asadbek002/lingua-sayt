@@ -4,6 +4,7 @@
 import { prisma } from "@/lib/prisma";
 import { callAI, parseJsonObject, translateBlogPost } from "./aiContentService";
 import { createPost, locationIds } from "./googleBusinessService";
+import { createAiPhotoForDraft, isAiImageConfigured } from "./aiImageService";
 import { sendTelegramText, sendTelegramPhotoToChannel } from "./telegramService";
 import { company } from "@/data/company";
 import { serviceDefs } from "@/data/servicePages";
@@ -16,7 +17,7 @@ const CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID || "";
 export const AGENT_TYPES = { gbp: "AGENT_GBP", channel: "AGENT_TG", reel: "AGENT_REEL" } as const;
 
 /** Public URL of the branded image for a draft (rendered by /api/agent/card). */
-export const draftImageUrl = (id: string) => `${SITE_URL}/api/agent/card/task/${id}.jpg`;
+export const draftImageUrl = (id: string) => `${SITE_URL}/api/agent/card/task/${id}.jpg?v=${Date.now()}`;
 export type Office = "namangan" | "tashkent";
 const OFFICE_NAMES: Record<Office, string> = { namangan: "Наманган", tashkent: "Ташкент" };
 
@@ -172,10 +173,14 @@ export async function draftChannelAnnouncement(post: { title: string; slug: stri
     600
   );
   if (res.error || !res.content.trim()) return;
-  await prisma.seoTask.create({
+  const task = await prisma.seoTask.create({
     data: { type: AGENT_TYPES.channel, title: `Анонс: ${post.title}`, description: res.content.trim().slice(0, 3900), targetUrl: CHANNEL_ID },
   });
-  await notifyStaff(`🤖 Агент подготовил анонс для Telegram-канала: «${post.title}».\nПроверьте и опубликуйте: ${SITE_URL}/admin/agent`);
+  // A modern AI photo for the channel; without a Gemini key (or on failure) the branded card is used
+  const photoError = isAiImageConfigured() ? await createAiPhotoForDraft(task.id, post.title, post.title) : "off";
+  await notifyStaff(
+    `🤖 Агент подготовил анонс для Telegram-канала: «${post.title}»${photoError && photoError !== "off" ? " (ИИ-фото не получилось, стоит фирменная карточка)" : ""}.\nПроверьте и опубликуйте: ${SITE_URL}/admin/agent`
+  );
 }
 
 // ---------- Instagram reel scripts ----------
@@ -235,6 +240,16 @@ export async function publishAgentDraft(id: string, text: string): Promise<{ ok:
 
   await prisma.seoTask.update({ where: { id }, data: { status: "PUBLISHED", description: body } });
   return { ok: true };
+}
+
+/** Generates a new AI photo for a pending channel announcement. */
+export async function regenerateDraftPhoto(id: string): Promise<{ ok: boolean; error?: string }> {
+  const task = await prisma.seoTask.findUnique({ where: { id } });
+  if (!task || task.type !== AGENT_TYPES.channel || task.status !== "PENDING") return { ok: false, error: "Черновик не найден" };
+  if (!isAiImageConfigured()) return { ok: false, error: "Задайте GEMINI_API_KEY в .env сервера" };
+  const title = task.title.replace(/^Анонс:\s*/, "");
+  const error = await createAiPhotoForDraft(task.id, title, title);
+  return error ? { ok: false, error } : { ok: true };
 }
 
 export async function rejectAgentDraft(id: string) {

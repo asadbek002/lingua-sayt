@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, RefreshCw, Send, X, Sparkles, Copy, Check } from "lucide-react";
+import { Loader2, RefreshCw, Send, X, Sparkles, Copy, Check, ImageIcon } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import AdminNav from "@/components/AdminNav";
 
@@ -45,6 +45,24 @@ export default function AdminAgentPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [imageVersion, setImageVersion] = useState<Record<string, number>>({});
+
+  const newPhoto = async (d: Draft) => {
+    setBusy(`photo-${d.id}`);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/admin/agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${password}` },
+        body: JSON.stringify({ action: "regenerate-photo", id: d.id }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok) setImageVersion((v) => ({ ...v, [d.id]: Date.now() }));
+      setMessage(res.ok ? { ok: true, text: "Новое фото готово" } : { ok: false, text: json.error || "Не удалось создать фото" });
+    } finally {
+      setBusy(null);
+    }
+  };
 
   const copy = async (id: string) => {
     try {
@@ -145,7 +163,7 @@ export default function AdminAgentPage() {
             <li>Ничего не публикуется само: статьи ждут в «Блоге» как черновики, посты — здесь.</li>
             <li>Когда вы публикуете статью, агент готовит анонс для Telegram-канала — он тоже появится здесь.</li>
             <li>Раз в неделю — сценарий рилса для Instagram: скопируйте его в ваш сервис видео.</li>
-            <li>К постам Google и анонсам автоматически добавляется фирменная картинка (превью — над текстом).</li>
+            <li>К постам Google добавляется фирменная картинка, к анонсам в канал — современное ИИ-фото с вашим логотипом (кнопка «Новое фото», если не понравилось).</li>
             <li>Проверьте факты (цены, сроки), при необходимости поправьте текст и нажмите «Опубликовать».</li>
           </ul>
           {data && !data.channelConfigured && (
@@ -203,7 +221,7 @@ export default function AdminAgentPage() {
                   {d.type !== "AGENT_REEL" && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={`/api/agent/card/task/${d.id}.jpg`}
+                      src={`/api/agent/card/task/${d.id}.jpg?v=${imageVersion[d.id] ?? 0}`}
                       alt=""
                       className="w-full max-w-sm rounded-xl border border-gray-100 mb-3"
                     />
@@ -223,6 +241,15 @@ export default function AdminAgentPage() {
                       {busy === d.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}{" "}
                       {d.type === "AGENT_REEL" ? "Отметить использованным" : "Опубликовать"}
                     </button>
+                    {d.type === "AGENT_TG" && (
+                      <button
+                        onClick={() => newPhoto(d)}
+                        disabled={!!busy}
+                        className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-xl disabled:opacity-50"
+                      >
+                        {busy === `photo-${d.id}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />} Новое фото
+                      </button>
+                    )}
                     {d.type === "AGENT_REEL" && (
                       <button
                         onClick={() => copy(d.id)}

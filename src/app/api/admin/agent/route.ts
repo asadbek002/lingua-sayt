@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/serverAuth";
 import { prisma } from "@/lib/prisma";
-import { AGENT_TYPES, publishAgentDraft, rejectAgentDraft } from "@/lib/services/contentAgentService";
+import { AGENT_TYPES, publishAgentDraft, rejectAgentDraft, regenerateDraftPhoto } from "@/lib/services/contentAgentService";
 
 const TYPES = [AGENT_TYPES.gbp, AGENT_TYPES.channel, AGENT_TYPES.reel];
 
@@ -33,6 +33,10 @@ export async function POST(req: NextRequest) {
   const { action, id, text } = await req.json();
   if (action === "publish") {
     const result = await publishAgentDraft(String(id), String(text ?? ""));
+    return NextResponse.json(result, { status: result.ok ? 200 : 400 });
+  }
+  if (action === "regenerate-photo") {
+    const result = await regenerateDraftPhoto(String(id));
     return NextResponse.json(result, { status: result.ok ? 200 : 400 });
   }
   if (action === "reject") {

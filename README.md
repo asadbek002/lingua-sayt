@@ -33,6 +33,7 @@ The agent drafts content; nothing is published without approval in the admin pan
 - **Google Business** (`job=gbp`): drafts one post per office, rotating through `GBP_TOPICS`; approve on `/admin/agent`.
 - **Telegram channel**: when a blog post is published for the first time, an announcement (uz + ru) is drafted on `/admin/agent`.
 - **Instagram reels** (`job=reel`): a weekly ready-to-shoot script (hook, presenter text uz + ru, captions, post description) to produce in an AI-video tool.
+- **AI photos for the Telegram channel**: with `GEMINI_API_KEY` set, each channel announcement gets a modern text-free photo from Gemini (`IMAGE_MODEL`, default `gemini-nano-banana-2.1`) with the logo and headline composited on top; stored in `uploads/agent/`. Without the key, or if generation fails, the branded card is used.
 - **Images**: Google Business posts and channel announcements get a branded card (`/api/agent/card/task/<id>.jpg`); blog posts get a cover and link preview (`/api/agent/card/post/<slug>.jpg`). Rendered with sharp: the server needs a font with Cyrillic, e.g. `apt install fonts-dejavu-core`.
 - Every new draft is announced in the staff chat (`TELEGRAM_ADMIN_CHAT_IDS`).
 
